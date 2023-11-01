@@ -91,6 +91,7 @@ void Scene::update(float dt)
 }
 
 void Scene::DrawCube() {
+
 	glBindTexture(GL_TEXTURE_2D, SKYBOX);
 	glTranslatef(camera.getPosX(), camera.getPosY(), camera.getPosZ());
 	glBegin(GL_QUADS);
@@ -157,23 +158,10 @@ void Scene::DrawCube() {
 
 }
 
-void Scene::render() {
-
-	// Clear Color and Depth Buffers
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	// Reset transformations
-	glLoadIdentity();
-	// Set the camera
-	gluLookAt(camera.getPosX(), camera.getPosY(), camera.getPosZ(), camera.getLookAtX(), camera.getLookAtY(), camera.getLookAtZ(), camera.getUpX(), camera.getUpY(), camera.getUpZ());
-	glPushMatrix();
-	glDisable(GL_DEPTH_TEST);
-	DrawCube();
-	glEnable(GL_DEPTH_TEST);
-	glPopMatrix();
-	// Render geometry/scene here -------------------------------------
-
+void Scene::DrawTriangles() {
+	glBindTexture(GL_TEXTURE_2D, NULL);
 	glEnable(GL_COLOR_MATERIAL);
+	glDisable(GL_DEPTH_TEST);
 	glPushMatrix();
 	glBegin(GL_TRIANGLES);
 	glColor3f(1.0, 0.0, 0.0);
@@ -193,6 +181,24 @@ void Scene::render() {
 	glVertex3f(-1.0f, -1.0f, 0.0f);
 	glEnd();
 	glPopMatrix();
+}
+void Scene::render() {
+
+	// Clear Color and Depth Buffers
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	// Reset transformations
+	glLoadIdentity();
+	// Set the camera
+	gluLookAt(camera.getPosX(), camera.getPosY(), camera.getPosZ(), camera.getLookAtX(), camera.getLookAtY(), camera.getLookAtZ(), camera.getUpX(), camera.getUpY(), camera.getUpZ());
+	glPushMatrix();
+	glDisable(GL_DEPTH_TEST);
+	DrawCube();
+	glEnable(GL_DEPTH_TEST);
+	glPopMatrix();
+	// Render geometry/scene here -------------------------------------
+	DrawTriangles();
+	
 
 	// End render geometry --------------------------------------
 

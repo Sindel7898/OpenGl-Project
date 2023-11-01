@@ -35,7 +35,7 @@ public:
 	void resize(int w, int h);
 	Camera camera;
 	void DrawCube();
-	void DrawSmallCube();
+	void DrawTriangles();
 	float xDiff = 0;
 	float yDiff = 0;
 

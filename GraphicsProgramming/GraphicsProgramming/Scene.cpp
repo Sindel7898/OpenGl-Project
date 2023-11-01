@@ -19,6 +19,9 @@ Scene::Scene(Input* in)
 
 	glEnable(GL_TEXTURE_2D);
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+	glEnable(GL_BLEND);
+
 	// Initialise scene variables
 
 
@@ -159,15 +162,17 @@ void Scene::DrawCube() {
 }
 
 void Scene::DrawTriangles() {
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glBindTexture(GL_TEXTURE_2D, NULL);
 	glEnable(GL_COLOR_MATERIAL);
 	glDisable(GL_DEPTH_TEST);
 	glPushMatrix();
 	glBegin(GL_TRIANGLES);
-	glColor3f(1.0, 0.0, 0.0);
+	glColor4f(1.0, 0.0, 0.0,1);
 	glVertex2f(0.0, 1.0);
 	glVertex2f(-1.0, -1.0);
 	glVertex2f(1.0, -1.0);
+	glEnable(GL_BLEND);
 	glEnd();
 	glPopMatrix();
 
@@ -175,10 +180,11 @@ void Scene::DrawTriangles() {
 	glRotatef(90.0f, 0.0f, 0.0f, 1.0f);
 	glTranslatef(0, 0, -0.5);
 	glBegin(GL_TRIANGLES);
-	glColor3f(0.0f, 0.0f, 1.0f);
+	glColor4f(0.0f, 0.0f, 1.0f,0.25);
 	glVertex3f(0.0f, 1.0f, 0.0f);
 	glVertex3f(1.0f, -1.0f, 0.0f);
 	glVertex3f(-1.0f, -1.0f, 0.0f);
+	glDisable(GL_BLEND);
 	glEnd();
 	glPopMatrix();
 }
@@ -197,6 +203,7 @@ void Scene::render() {
 	glEnable(GL_DEPTH_TEST);
 	glPopMatrix();
 	// Render geometry/scene here -------------------------------------
+
 	DrawTriangles();
 	
 

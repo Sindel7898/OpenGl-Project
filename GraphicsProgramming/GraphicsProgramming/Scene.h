@@ -12,20 +12,18 @@
 #include <gl/GLU.h>
 #include "Input.h"
 #include <stdio.h>
-#include "Camera.h"
-
 // Further includes should go here:
 #include "SOIL.h"
 #include <vector>
 
-
-class Scene {
+#include "model.h"
+#include "Skybox.h"
+#include "Camera1.h"
+class Scene{
 
 public:
-	float CubeRotaion;
-	Scene(Input* in);
+	Scene(Input *in);
 	// Main render function
-	GLuint SKYBOX;
 	void render();
 	// Handle input function that receives delta time from parent.
 	void handleInput(float dt);
@@ -33,12 +31,17 @@ public:
 	void update(float dt);
 	// Resizes the OpenGL output based on new window size.
 	void resize(int w, int h);
-	Camera camera;
+	void Light();
 	void DrawCube();
-	void DrawTriangles();
+
+	float Rotation;
+	GLuint groundImg;
+	Skybox skybox;
+	Camera camera;
+	GLuint SKYBOX;
+
 	float xDiff = 0;
 	float yDiff = 0;
-
 protected:
 	// configure opengl render pipeline
 	void initialiseOpenGL();
@@ -49,11 +52,11 @@ protected:
 	void calculateFPS();
 
 	// draw primitive functions
-
+	
 
 	// For access to user input.
 	Input* input;
-
+		
 	// For Window and frustum calculation.
 	int width, height;
 	float fov, nearPlane, farPlane;
@@ -62,9 +65,8 @@ protected:
 	int frame = 0, time, timebase = 0;
 	char fps[40];
 	char mouseText[40];
-	char uptext[40];
-	char positiontext[40];
 
+	Model my_model;
 };
 
 #endif

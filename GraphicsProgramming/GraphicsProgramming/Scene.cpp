@@ -2,40 +2,43 @@
 
 // Scene constructor, initilises OpenGL
 // You should add further variables to need initilised.
-
-Scene::Scene(Input* in)
+Scene::Scene(Input *in)
 {
 	// Store pointer for input class
 	input = in;
 	initialiseOpenGL();
 
 	// Other OpenGL / render setting should be applied here.
-
-	glPolygonMode(GL_FRONT, GL_FILL);
-	glPolygonMode(GL_BACK, GL_FILL);
-
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LEQUAL);
-
-	glEnable(GL_TEXTURE_2D);
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-
-	glEnable(GL_BLEND);
-
 	// Initialise scene variables
+	glEnable(GL_LIGHTING);
+	glDisable(GL_COLOR_MATERIAL);
+	glShadeModel(GL_SMOOTH);
 
 
+	my_model.load("models/teapot.obj", "gfx/crate.png");
+	
 	SKYBOX = SOIL_load_OGL_texture(
 		"gfx/skybox.png",
 		SOIL_LOAD_AUTO,
 		SOIL_CREATE_NEW_ID,
 		SOIL_FLAG_MIPMAPS | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT);
 }
-	
 
 void Scene::handleInput(float dt)
 {
 	// Handle user input
+	if (input->isKeyDown('l') || input->isKeyDown('L')) {
+		glPolygonMode(GL_FRONT, GL_LINE);
+		glPolygonMode(GL_BACK, GL_LINE);
+
+	}
+
+	if (input->isKeyDown('o') || input->isKeyDown('O')) {
+		glPolygonMode(GL_FRONT, GL_FILL);
+		glPolygonMode(GL_BACK, GL_FILL);
+
+	}
+
 
 	if (input->isKeyDown('w'))
 	{
@@ -84,19 +87,24 @@ void Scene::handleInput(float dt)
 
 }
 
+
 void Scene::update(float dt)
 {
 	// update scene related variables.
-	CubeRotaion += 150 * dt;
+	if (input->isKeyDown('r') || input->isKeyDown('R')) {
+		Rotation += 150 * dt;
+	}
 	// Calculate FPS for output
 	calculateFPS();
 	camera.update();
 }
 
+
 void Scene::DrawCube() {
 
 	glBindTexture(GL_TEXTURE_2D, SKYBOX);
 	glTranslatef(camera.getPosX(), camera.getPosY(), camera.getPosZ());
+	skybox.drawSkybox();
 	glBegin(GL_QUADS);
 
 	glTexCoord2f(0.25f, 0.25f);
@@ -161,57 +169,65 @@ void Scene::DrawCube() {
 
 }
 
-void Scene::DrawTriangles() {
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glBindTexture(GL_TEXTURE_2D, NULL);
-	glEnable(GL_COLOR_MATERIAL);
-	glDisable(GL_DEPTH_TEST);
+void Scene::Light() {
+
 	glPushMatrix();
-	glBegin(GL_TRIANGLES);
-	glColor4f(1.0, 0.0, 0.0,1);
-	glVertex2f(0.0, 1.0);
-	glVertex2f(-1.0, -1.0);
-	glVertex2f(1.0, -1.0);
-	glEnable(GL_BLEND);
-	glEnd();
+	glRotatef(Rotation, 0, 1, 0);
+	GLfloat LightDiffusion[] = { 1.0f,1.0f,1.0f,1.0f };
+	GLfloat LightPosition[] = { 0.0f, 1.0f, -10.0f, 1.0f };
+	GLfloat LightAmbient[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	GLfloat SpotDirection[] = { 0.0f, 0.0f, 1.0f };
+
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, LightDiffusion);
+	glLightfv(GL_LIGHT0, GL_POSITION, LightPosition);
+	glLightfv(GL_LIGHT0, GL_AMBIENT, LightAmbient);
+	glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, SpotDirection);
+	glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 25.0f);
+	glLightf(GL_LIGHT0, GL_SPOT_EXPONENT, 50.0f);
+	glEnable(GL_LIGHT0);
 	glPopMatrix();
 
 	glPushMatrix();
-	glRotatef(90.0f, 0.0f, 0.0f, 1.0f);
-	glTranslatef(0, 0, -0.5);
-	glBegin(GL_TRIANGLES);
-	glColor4f(0.0f, 0.0f, 1.0f,0.25);
-	glVertex3f(0.0f, 1.0f, 0.0f);
-	glVertex3f(1.0f, -1.0f, 0.0f);
-	glVertex3f(-1.0f, -1.0f, 0.0f);
-	glDisable(GL_BLEND);
-	glEnd();
+	glScalef(0.1, 0.1, 0.1);
+	GLfloat mat_diff_blue[] = { 0.0, 1.0, 1.0, 1.0 };
+	GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0 };
+	GLfloat shininess = 100;
+	GLfloat mat_emission[] = { 0.0, 0.0, 0.0, 0.0 };
+
+
+	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, mat_diff_blue);
+	glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+	glMateriali(GL_FRONT, GL_SHININESS, shininess);
+	glMaterialfv(GL_FRONT, GL_EMISSION, mat_emission);
+	gluSphere(gluNewQuadric(), 1.0, 100, 40);
 	glPopMatrix();
 }
+
+
 void Scene::render() {
 
 	// Clear Color and Depth Buffers
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
 	// Reset transformations
 	glLoadIdentity();
 	// Set the camera
 	gluLookAt(camera.getPosX(), camera.getPosY(), camera.getPosZ(), camera.getLookAtX(), camera.getLookAtY(), camera.getLookAtZ(), camera.getUpX(), camera.getUpY(), camera.getUpZ());
+	// Render geometry/scene here -------------------------------------
 	glPushMatrix();
 	glDisable(GL_DEPTH_TEST);
 	DrawCube();
 	glEnable(GL_DEPTH_TEST);
 	glPopMatrix();
-	// Render geometry/scene here -------------------------------------
 
-	DrawTriangles();
+	Light();
+	my_model.render();
 	
-
 	// End render geometry --------------------------------------
 
 	// Render text, should be last object rendered.
 	renderTextOutput();
-
+	
 	// Swap buffers, after all objects are rendered.
 	glutSwapBuffers();
 }
@@ -220,19 +236,17 @@ void Scene::initialiseOpenGL()
 {
 	//OpenGL settings
 	glShadeModel(GL_SMOOTH);							// Enable Smooth Shading
-	glClearColor(0, 0, 0,0);			// Cornflour Blue Background
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);			
 	glClearDepth(1.0f);									// Depth Buffer Setup
 	glClearStencil(0);									// Clear stencil buffer
 	glEnable(GL_DEPTH_TEST);							// Enables Depth Testing
 	glDepthFunc(GL_LEQUAL);								// The Type Of Depth Testing To Do
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);	// Really Nice Perspective Calculations
 	glLightModelf(GL_LIGHT_MODEL_LOCAL_VIEWER, 1);
-
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);	// Blending function
 }
 
 // Handles the resize of the window. If the window changes size the perspective matrix requires re-calculation to match new window size.
-void Scene::resize(int w, int h)
+void Scene::resize(int w, int h) 
 {
 	width = w;
 	height = h;
@@ -269,7 +283,7 @@ void Scene::calculateFPS()
 	time = glutGet(GLUT_ELAPSED_TIME);
 
 	if (time - timebase > 1000) {
-		sprintf_s(fps, "FPS: %4.2f", frame * 1000.0 / (time - timebase));
+		sprintf_s(fps, "FPS: %4.2f", frame*1000.0 / (time - timebase));
 		timebase = time;
 		frame = 0;
 	}
@@ -282,11 +296,6 @@ void Scene::renderTextOutput()
 	sprintf_s(mouseText, "Mouse: %i, %i", input->getMouseX(), input->getMouseY());
 	displayText(-1.f, 0.96f, 1.f, 0.f, 0.f, mouseText);
 	displayText(-1.f, 0.90f, 1.f, 0.f, 0.f, fps);
-	sprintf_s(uptext, "upvector %f %f %f", camera.getUpX(), camera.getUpY(), camera.getUpZ());
-	displayText(-1.f, 0.84f, 1.f, 0.f, 0.f, uptext);
-	sprintf_s(positiontext, "Position %f %f %f", camera.getPosX(), camera.getPosY(), camera.getPosZ());
-	displayText(-1.f, 0.74f, 1.f, 0.f, 0.f, positiontext);
-
 }
 
 // Renders text to screen. Must be called last in render function (before swap buffers)
@@ -316,6 +325,6 @@ void Scene::displayText(float x, float y, float r, float g, float b, char* strin
 	// Swap back to 3D rendering.
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(fov, ((float)width / (float)height), nearPlane, farPlane);
+	gluPerspective(fov, ((float)width/(float)height), nearPlane, farPlane);
 	glMatrixMode(GL_MODELVIEW);
 }

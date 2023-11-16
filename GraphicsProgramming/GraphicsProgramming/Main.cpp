@@ -11,10 +11,13 @@
 #include <gl/GLU.h>
 #include "Scene.h"
 #include "Input.h"
+#include "Lighting.h"
+
 
 // Required variables; pointer to scene and input objects. Initialise variable used in delta time calculation.
 Scene* scene;
 Input* input;
+Lighting* lighting;
 int oldTimeSinceStart = 0;
 
 // Called when the window detects a change in size.
@@ -40,6 +43,9 @@ void renderScene(void)
 	scene->handleInput(deltaTime);
 	scene->update(deltaTime);
 	scene->render();
+
+	
+
 }
 
 // Handles keyboard input events from GLUT.
@@ -178,7 +184,7 @@ int main(int argc, char **argv)
 	// Initialise input and scene objects.
 	input = new Input();
 	scene = new Scene(input);
-	
+	lighting = new Lighting();
 	// Enter GLUT event processing cycle
 	glutMainLoop();
 

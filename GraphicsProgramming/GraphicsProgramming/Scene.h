@@ -19,9 +19,24 @@
 #include "model.h"
 #include "Skybox.h"
 #include "Camera1.h"
+#include"StartingBuilding.h"
+#include "Lighting.h"
+
 class Scene{
 
 public:
+	Skybox skybox;
+	Camera camera;
+	StartingBuilding SB;
+	Lighting lighting;
+	GLint SKYBOX;
+
+
+	float Rotation;
+	//GLuint SKYBOX;
+	float xDiff = 0;
+	float yDiff = 0;
+
 	Scene(Input *in);
 	// Main render function
 	void render();
@@ -33,15 +48,6 @@ public:
 	void resize(int w, int h);
 	void Light();
 	void DrawCube();
-
-	float Rotation;
-	GLuint groundImg;
-	Skybox skybox;
-	Camera camera;
-	GLuint SKYBOX;
-
-	float xDiff = 0;
-	float yDiff = 0;
 protected:
 	// configure opengl render pipeline
 	void initialiseOpenGL();

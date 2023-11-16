@@ -101,10 +101,10 @@ void Scene::update(float dt)
 
 
 void Scene::DrawCube() {
-
+	glPushMatrix();
 	glBindTexture(GL_TEXTURE_2D, SKYBOX);
 	glTranslatef(camera.getPosX(), camera.getPosY(), camera.getPosZ());
-	skybox.drawSkybox();
+	/*skybox.drawSkybox();*/
 	glBegin(GL_QUADS);
 
 	glTexCoord2f(0.25f, 0.25f);
@@ -165,43 +165,11 @@ void Scene::DrawCube() {
 	glVertex3f(0.5f, -0.5f, 0.5f);
 	glTexCoord2f(1.0f, 0.5f);
 	glVertex3f(-0.5f, -0.5f, 0.5f);
+	glPopMatrix();
 	glEnd();
-
+	
 }
 
-void Scene::Light() {
-
-	glPushMatrix();
-	glRotatef(Rotation, 0, 1, 0);
-	GLfloat LightDiffusion[] = { 1.0f,1.0f,1.0f,1.0f };
-	GLfloat LightPosition[] = { 0.0f, 1.0f, -10.0f, 1.0f };
-	GLfloat LightAmbient[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-	GLfloat SpotDirection[] = { 0.0f, 0.0f, 1.0f };
-
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, LightDiffusion);
-	glLightfv(GL_LIGHT0, GL_POSITION, LightPosition);
-	glLightfv(GL_LIGHT0, GL_AMBIENT, LightAmbient);
-	glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, SpotDirection);
-	glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 25.0f);
-	glLightf(GL_LIGHT0, GL_SPOT_EXPONENT, 50.0f);
-	glEnable(GL_LIGHT0);
-	glPopMatrix();
-
-	glPushMatrix();
-	glScalef(0.1, 0.1, 0.1);
-	GLfloat mat_diff_blue[] = { 0.0, 1.0, 1.0, 1.0 };
-	GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0 };
-	GLfloat shininess = 100;
-	GLfloat mat_emission[] = { 0.0, 0.0, 0.0, 0.0 };
-
-
-	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, mat_diff_blue);
-	glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
-	glMateriali(GL_FRONT, GL_SHININESS, shininess);
-	glMaterialfv(GL_FRONT, GL_EMISSION, mat_emission);
-	gluSphere(gluNewQuadric(), 1.0, 100, 40);
-	glPopMatrix();
-}
 
 
 void Scene::render() {
@@ -217,14 +185,23 @@ void Scene::render() {
 	glPushMatrix();
 	glDisable(GL_DEPTH_TEST);
 	DrawCube();
+	
 	glEnable(GL_DEPTH_TEST);
 	glPopMatrix();
 
-	Light();
+	glPushMatrix();
+	glRotatef(Rotation, 0, 1, 0);
+	lighting.Lighting1();
+	glPopMatrix();
+
+	SB.Box();
+	glTranslatef(100,100,0);
+	glScalef(0.0001, 0.0001, 0.0001);
 	my_model.render();
 	
+	
 	// End render geometry --------------------------------------
-
+	glEnd();
 	// Render text, should be last object rendered.
 	renderTextOutput();
 	

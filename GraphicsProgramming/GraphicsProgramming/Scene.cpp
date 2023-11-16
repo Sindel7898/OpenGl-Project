@@ -11,8 +11,9 @@ Scene::Scene(Input *in)
 	// Other OpenGL / render setting should be applied here.
 	// Initialise scene variables
 	glEnable(GL_LIGHTING);
-	glDisable(GL_COLOR_MATERIAL);
 	glShadeModel(GL_SMOOTH);
+	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_COLOR_MATERIAL);
 
 
 	my_model.load("models/teapot.obj", "gfx/crate.png");
@@ -193,6 +194,7 @@ void Scene::render() {
 	glRotatef(Rotation, 0, 1, 0);
 	lighting.Lighting1();
 	glPopMatrix();
+
 
 	SB.Box();
 	glTranslatef(100,100,0);

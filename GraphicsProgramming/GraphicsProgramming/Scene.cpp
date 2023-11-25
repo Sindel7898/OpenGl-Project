@@ -198,7 +198,18 @@ void Scene::render() {
 	glPopMatrix();
 
 	glPushMatrix();
-	startingBuilding.Box();
+	startingBuilding.Building();
+	glPopMatrix();
+
+	glPushMatrix();
+	startingBuilding.DisplayStand(8,3);
+	startingBuilding.DisplayStand(4,3);
+	startingBuilding.DisplayStand(0, 3);
+	//opposite side of building
+	startingBuilding.DisplayStand(8, -3);
+	startingBuilding.DisplayStand(4, -3);
+	startingBuilding.DisplayStand(0, -3);
+
 	glPopMatrix();
 
 	glPushMatrix();

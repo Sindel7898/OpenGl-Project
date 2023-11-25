@@ -12,7 +12,11 @@ class StartingBuilding {
 	public:
 
 	StartingBuilding();
+	void DisplayStand(int x, int z);
 	GLint Floor;
 	GLint Wall;
-	void Box();
+	GLint Stand;
+	void Building();
+	void DisplayStand();
+	
 };

@@ -15,6 +15,7 @@ public:
 	
 	Lighting();
 	void Lighting1();
+	void RoomLight();
 protected:
 	Input* input;
 };

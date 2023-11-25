@@ -13,7 +13,7 @@ Scene::Scene(Input *in)
 	glEnable(GL_LIGHTING);
 	glShadeModel(GL_SMOOTH);
 	glEnable(GL_TEXTURE_2D);
-	glEnable(GL_COLOR_MATERIAL);
+	//glEnable(GL_COLOR_MATERIAL);
 
 
 	my_model.load("models/teapot.obj", "gfx/crate.png");
@@ -23,6 +23,7 @@ Scene::Scene(Input *in)
 		SOIL_LOAD_AUTO,
 		SOIL_CREATE_NEW_ID,
 		SOIL_FLAG_MIPMAPS | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT);
+
 }
 
 void Scene::handleInput(float dt)
@@ -33,6 +34,7 @@ void Scene::handleInput(float dt)
 		glPolygonMode(GL_BACK, GL_LINE);
 
 	}
+
 
 	if (input->isKeyDown('o') || input->isKeyDown('O')) {
 		glPolygonMode(GL_FRONT, GL_FILL);
@@ -127,7 +129,7 @@ void Scene::DrawCube() {
 	glTexCoord2f(0.5f, 0.5f);
 	glVertex3f(0.5f, -0.5f, -0.5f);
 
-	//Bottom Face
+	////Bottom Face
 	glTexCoord2f(0.25f, 0.5f);
 	glVertex3f(-0.5f, -0.5f, 0.5f);
 	glTexCoord2f(0.5f, 0.5f);
@@ -157,7 +159,7 @@ void Scene::DrawCube() {
 	glTexCoord2f(0.25f, 0.25f);
 	glVertex3f(-0.5f, 0.5f, -0.5f);
 
-	//Back Face
+	/*Back Face*/
 	glTexCoord2f(1.0f, 0.25f);
 	glVertex3f(-0.5f, 0.5f, 0.5f);
 	glTexCoord2f(0.75f, 0.25f);
@@ -186,21 +188,24 @@ void Scene::render() {
 	glPushMatrix();
 	glDisable(GL_DEPTH_TEST);
 	DrawCube();
-	
+
 	glEnable(GL_DEPTH_TEST);
 	glPopMatrix();
 
 	glPushMatrix();
-	glRotatef(Rotation, 0, 1, 0);
-	lighting.Lighting1();
+	//lighting.Lighting1()
+	lighting.RoomLight();
 	glPopMatrix();
 
+	glPushMatrix();
+	startingBuilding.Box();
+	glPopMatrix();
 
-	SB.Box();
-	glTranslatef(100,100,0);
-	glScalef(0.0001, 0.0001, 0.0001);
+	glPushMatrix();
+	glTranslatef(0,1,0);
+	glScalef(0.2, 0.2, 0.2);
 	my_model.render();
-	
+	glPopMatrix();
 	
 	// End render geometry --------------------------------------
 	glEnd();

@@ -27,9 +27,10 @@ class Scene{
 public:
 	Skybox skybox;
 	Camera camera;
-	StartingBuilding SB;
+	StartingBuilding startingBuilding;
 	Lighting lighting;
 	GLint SKYBOX;
+	
 
 
 	float Rotation;

@@ -10,6 +10,7 @@
 
 class StartingBuilding {
 	public:
+
 	StartingBuilding();
 	GLint Floor;
 	GLint Wall;

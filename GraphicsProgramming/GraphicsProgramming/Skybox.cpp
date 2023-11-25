@@ -16,7 +16,7 @@ Skybox::Skybox()
 
 void Skybox::drawSkybox()
 {
-	/*glScalef(100, 100, 100);*/
+	
 	glBindTexture(GL_TEXTURE_2D, SKYBOX);
 	glTranslatef(camera.getPosX(), camera.getPosY(), camera.getPosZ());
 	/*skybox.drawSkybox();*/
@@ -81,5 +81,6 @@ void Skybox::drawSkybox()
 	glTexCoord2f(1.0f, 0.5f);
 	glVertex3f(-0.5f, -0.5f, 0.5f);
 	glEnd();
+
 }
 

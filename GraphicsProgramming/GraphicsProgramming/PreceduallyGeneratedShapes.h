@@ -8,14 +8,13 @@
 #include "SOIL.h"
 #include <vector>
 
-class StartingBuilding {
-	public:
-
-	StartingBuilding();
-	void DisplayStand(int x, int z);
-	GLint Floor;
-	GLint Wall;
-	GLint Stand;
-	void Building();
+class PrecuduallyGeneratedShapes
+{
+public:
+	//PrecuduallyGeneratedShapes();
+	//~PrecuduallyGeneratedShapes();
 	
+	void Sphere(float r);
+
 };
+

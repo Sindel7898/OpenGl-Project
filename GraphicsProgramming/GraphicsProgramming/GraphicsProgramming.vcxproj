@@ -90,7 +90,9 @@
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Lighting.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Material.cpp" />
     <ClCompile Include="model.cpp" />
+    <ClCompile Include="PreceduallyGeneratedShapes.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Skybox.cpp" />
     <ClCompile Include="StartingBuilding.cpp" />
@@ -100,7 +102,9 @@
     <ClInclude Include="Camera1.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Lighting.h" />
+    <ClInclude Include="Material.h" />
     <ClInclude Include="model.h" />
+    <ClInclude Include="PreceduallyGeneratedShapes.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Skybox.h" />
     <ClInclude Include="StartingBuilding.h" />

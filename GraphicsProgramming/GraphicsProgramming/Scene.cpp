@@ -2,7 +2,7 @@
 
 // Scene constructor, initilises OpenGL
 // You should add further variables to need initilised.
-Scene::Scene(Input *in)
+Scene::Scene(Input *in)							
 {
 	// Store pointer for input class
 	input = in;
@@ -12,11 +12,15 @@ Scene::Scene(Input *in)
 	// Initialise scene variables
 	glEnable(GL_LIGHTING);
 	glShadeModel(GL_SMOOTH);
+	glEnable(GL_COLOR_MATERIAL);
 	glEnable(GL_TEXTURE_2D);
 	//glEnable(GL_COLOR_MATERIAL);
 
 
-	my_model.load("models/teapot.obj", "gfx/crate.png");
+	Teapot.load("models/teapot.obj", "gfx/crate.png");
+	NintendoDS.load("models/N_3DS.obj", "gfx/Mt_Rolling3DS_01.png");
+	SpaceShip.load("models/spaceship.obj", "gfx/spaceship.JPG");
+
 	
 	SKYBOX = SOIL_load_OGL_texture(
 		"gfx/skybox.png",
@@ -24,22 +28,33 @@ Scene::Scene(Input *in)
 		SOIL_CREATE_NEW_ID,
 		SOIL_FLAG_MIPMAPS | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT);
 
+
+	Earth = SOIL_load_OGL_texture(
+		"gfx/crate.png",
+		SOIL_LOAD_AUTO,
+		SOIL_CREATE_NEW_ID,
+		SOIL_FLAG_MIPMAPS | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT);
+
+
+
 }
 
 void Scene::handleInput(float dt)
 {
 	// Handle user input
-	if (input->isKeyDown('l') || input->isKeyDown('L')) {
+	if (input->isKeyDown('r') || input->isKeyDown('R')) {
 		glPolygonMode(GL_FRONT, GL_LINE);
 		glPolygonMode(GL_BACK, GL_LINE);
 
-	}
+		input->setKeyUp('r');
+		input->setKeyUp('R');
+		renderType++; 
 
-
-	if (input->isKeyDown('o') || input->isKeyDown('O')) {
-		glPolygonMode(GL_FRONT, GL_FILL);
-		glPolygonMode(GL_BACK, GL_FILL);
-
+		if (renderType == 2) {
+			glPolygonMode(GL_FRONT, GL_FILL);
+			glPolygonMode(GL_BACK, GL_FILL);
+			renderType = 0;
+		}
 	}
 
 
@@ -91,12 +106,14 @@ void Scene::handleInput(float dt)
 }
 
 
+
+
 void Scene::update(float dt)
 {
 	// update scene related variables.
-	if (input->isKeyDown('r') || input->isKeyDown('R')) {
-		Rotation += 150 * dt;
-	}
+	
+		Rotation += 40 * dt;
+	
 	// Calculate FPS for output
 	calculateFPS();
 	camera.update();
@@ -105,6 +122,7 @@ void Scene::update(float dt)
 
 void Scene::DrawCube() {
 	glPushMatrix();
+
 	glBindTexture(GL_TEXTURE_2D, SKYBOX);
 	glTranslatef(camera.getPosX(), camera.getPosY(), camera.getPosZ());
 	/*skybox.drawSkybox();*/
@@ -173,6 +191,148 @@ void Scene::DrawCube() {
 	
 }
 
+void Scene::StartingRoom() {
+
+	glPushMatrix();
+	startingBuilding.Building();
+	glPopMatrix();
+
+	glPushMatrix();
+	startingBuilding.DisplayStand(8, 3);
+	startingBuilding.DisplayStand(4, 3);
+	startingBuilding.DisplayStand(0, 3);
+	//opposite side of building
+	startingBuilding.DisplayStand(8, -3);
+	startingBuilding.DisplayStand(4, -3);
+	startingBuilding.DisplayStand(0, -3);
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(0, 1, 0);
+	glScalef(0.2, 0.2, 0.2);
+	Teapot.render();
+	glPopMatrix();
+
+
+	glPushMatrix();
+	glRotatef(90, 0.2f, 1.0f, 0.0f);
+	glTranslatef(12.0f, 2.0f, 0.0f);
+	glScalef(0.2f, 0.2f, 0.2f);
+	//GLfloat mat_diff_blue[] = { 0.1, 0.5, 0.8, 1.0 };
+	//glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, mat_diff_blue);
+
+	GLfloat mat_diff_blue[] = { 0.1, 0.5, 0.8, 1.0 };
+	GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0 };
+	GLfloat high_shininess = 100;
+	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, mat_diff_blue);
+	glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+	glMateriali(GL_FRONT, GL_SHININESS, high_shininess);
+	material.MaterialSpecifics(1, 60);
+
+	NintendoDS.render();
+	glPopMatrix();
+
+	glPushMatrix();
+	glRotatef(90.f, 0.2f, 1.0f, 0.0f);
+	glTranslatef(-12.0f, 4.0f, 0.0f);
+	glScalef(2.0f, 2.0f, 2.0f);
+	SpaceShip.render();
+	glPopMatrix();
+}
+
+void Scene::Planet() {
+
+	glPushMatrix();
+	material.MaterialSpecifics(1, 60);
+	glBindTexture(GL_TEXTURE_2D, Earth);
+	glTranslatef(80, 10, 5.0f);
+	gluSphere(gluNewQuadric(), 6, 300, 300);
+	glPopMatrix();
+
+	glPushMatrix();
+	material.MaterialSpecifics(0.5, 20);
+	glScalef(1, 1, 1);
+	glRotatef(Rotation, 0.2f, 1.0f, 0.0f);
+	glTranslatef(100.0f, 10.0f, 0.0f);
+	glScalef(10.0f, 10.0f, 5.0f);
+	SpaceShip.render();
+	glPopMatrix();
+
+
+	glPushMatrix();
+	material.MaterialSpecifics(0.5, 20);
+	glScalef(1, 1, 1);
+	glRotatef(Rotation, 0.0f, 0.0f, 1.0f);
+	glTranslatef(100.0f, 10.0f, 0.0f);
+	glScalef(10.0f, 10.0f, 5.0f);
+	SpaceShip.render();
+	glPopMatrix();
+
+	glPushMatrix();
+	material.MaterialSpecifics(0.5, 20);
+	glScalef(1, 1, 1);
+	glRotatef(10 + Rotation, 0.2f, -1.0f, 0.0f);
+	glTranslatef(100.0f, 10.0f, 0.0f);
+	glScalef(10.0f, 10.0f, 5.0f);
+	SpaceShip.render();
+	glPopMatrix();
+
+	glPushMatrix();
+	material.MaterialSpecifics(0.5, 20);
+	glScalef(1, 1, 1);
+	glRotatef(30 + Rotation, 0.2f, -1.0f, 0.0f);
+	glTranslatef(100.0f, 10.0f, 0.0f);
+	glScalef(10.0f, 10.0f, 5.0f);
+	SpaceShip.render();
+	glPopMatrix();
+
+	glPushMatrix();
+	material.MaterialSpecifics(0.5, 20);
+	glScalef(1, 1, 1);
+	glRotatef(90 + Rotation, 0.2f, 1.0f, 0.0f);
+	glTranslatef(100.0f, 10.0f, 0.0f);
+	glScalef(10.0f, 10.0f, 5.0f);
+	SpaceShip.render();
+	glPopMatrix();
+
+	glPushMatrix();
+	material.MaterialSpecifics(0.5, 20);
+	glScalef(1, 1, 1);
+	glRotatef(100 + Rotation, 0.2f, 1.0f, 0.0f);
+	glTranslatef(100.0f, 10.0f, 0.0f);
+	glScalef(10.0f, 10.0f, 5.0f);
+	SpaceShip.render();
+	glPopMatrix();
+
+	glPushMatrix();
+	material.MaterialSpecifics(0.5, 20);
+	glScalef(1, 1, 1);
+	glRotatef(150 + Rotation, 0.2f, -1.0f, 0.0f);
+	glTranslatef(100.0f, 10.0f, 0.0f);
+	glScalef(10.0f, 10.0f, 5.0f);
+	SpaceShip.render();
+	glPopMatrix();
+
+	glPushMatrix();
+	material.MaterialSpecifics(0.5, 20);
+	glScalef(1, 1, 1);
+	glRotatef(120 + Rotation, 0.2f, 1.0f, 0.0f);
+	glTranslatef(100.0f, 10.0f, 0.0f);
+	glScalef(10.0f, 10.0f, 5.0f);
+	SpaceShip.render();
+	glPopMatrix();
+
+	glPushMatrix();
+	glScalef(1, 1, 1);
+	material.MaterialSpecifics(0.5, 20);
+	glRotatef(200 + Rotation, 0.2f, 1.0f, 0.0f);
+	glTranslatef(100.0f, 10.0f, 0.0f);
+	glScalef(10.0f, 10.0f, 5.0f);
+	SpaceShip.render();
+	glPopMatrix();
+
+	
+}
 
 
 void Scene::render() {
@@ -198,26 +358,13 @@ void Scene::render() {
 	glPopMatrix();
 
 	glPushMatrix();
-	startingBuilding.Building();
-	glPopMatrix();
+	StartingRoom();
+    glPopMatrix();
 
 	glPushMatrix();
-	startingBuilding.DisplayStand(8,3);
-	startingBuilding.DisplayStand(4,3);
-	startingBuilding.DisplayStand(0, 3);
-	//opposite side of building
-	startingBuilding.DisplayStand(8, -3);
-	startingBuilding.DisplayStand(4, -3);
-	startingBuilding.DisplayStand(0, -3);
-
+	Planet();
 	glPopMatrix();
 
-	glPushMatrix();
-	glTranslatef(0,1,0);
-	glScalef(0.2, 0.2, 0.2);
-	my_model.render();
-	glPopMatrix();
-	
 	// End render geometry --------------------------------------
 	glEnd();
 	// Render text, should be last object rendered.
@@ -289,7 +436,10 @@ void Scene::renderTextOutput()
 {
 	// Render current mouse position and frames per second.
 	sprintf_s(mouseText, "Mouse: %i, %i", input->getMouseX(), input->getMouseY());
+	//sprintf_s(ObjectLocation,"location: %i, %i, %i", GetObjectForward(), GetObjectRight(), GetObjectUpward());
+
 	displayText(-1.f, 0.96f, 1.f, 0.f, 0.f, mouseText);
+	displayText(-1.f, 0.86f, 1.f, 0.f, 0.f, ObjectLocation);
 	displayText(-1.f, 0.90f, 1.f, 0.f, 0.f, fps);
 }
 

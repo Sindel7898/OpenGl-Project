@@ -155,8 +155,8 @@ int main(int argc, char **argv)
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA | GLUT_STENCIL);
 	//glutInitWindowPosition(100, 100);
-	glutInitWindowSize(1280, 720);
-	glutCreateWindow("My first triangle");
+	glutInitWindowSize(1920, 1080);
+	glutCreateWindow("CMP203 Project - Amir Akintunde Sanni");
 	
 	// Register callback functions for change in size and rendering.
 	glutDisplayFunc(renderScene);

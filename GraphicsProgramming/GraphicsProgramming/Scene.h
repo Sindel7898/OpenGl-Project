@@ -21,6 +21,8 @@
 #include "Camera1.h"
 #include"StartingBuilding.h"
 #include "Lighting.h"
+#include "PreceduallyGeneratedShapes.h"
+#include "material.h"
 
 class Scene{
 
@@ -30,7 +32,21 @@ public:
 	StartingBuilding startingBuilding;
 	Lighting lighting;
 	GLint SKYBOX;
+	Model Teapot;
+	Model NintendoDS;
+	Model SpaceShip;
+	PrecuduallyGeneratedShapes Sphere;
+	Material material;
+
+	GLint Earth;
 	
+
+	int renderType = 0;
+
+	float right = 0 ;
+	float upward = 0 ;
+	float forward = 0;
+
 
 
 	float Rotation;
@@ -49,6 +65,8 @@ public:
 	void resize(int w, int h);
 	void Light();
 	void DrawCube();
+	void Planet();
+	void StartingRoom();
 protected:
 	// configure opengl render pipeline
 	void initialiseOpenGL();
@@ -73,7 +91,7 @@ protected:
 	char fps[40];
 	char mouseText[40];
 
-	Model my_model;
+	char ObjectLocation[1000];
 };
 
 #endif

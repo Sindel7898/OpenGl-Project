@@ -46,7 +46,6 @@ void Lighting::Lighting1(){
 }
 
 
-
 void Lighting::RoomLight()
 {
 	glPushMatrix();

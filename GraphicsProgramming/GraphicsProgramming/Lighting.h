@@ -14,6 +14,7 @@ public:
 
 	
 	Lighting();
+	void Spotlight();
 	void Lighting1();
 	void RoomLight();
 protected:

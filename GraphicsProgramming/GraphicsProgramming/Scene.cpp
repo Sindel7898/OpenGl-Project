@@ -11,16 +11,16 @@ Scene::Scene(Input *in)
 	// Other OpenGL / render setting should be applied here.
 	// Initialise scene variables
 	glEnable(GL_LIGHTING);
+	glDisable(GL_COLOR_MATERIAL);
+
 	glShadeModel(GL_SMOOTH);
-	glEnable(GL_COLOR_MATERIAL);
 	glEnable(GL_TEXTURE_2D);
-	//glEnable(GL_COLOR_MATERIAL);
 
 
 	Teapot.load("models/teapot.obj", "gfx/crate.png");
 	NintendoDS.load("models/N_3DS.obj", "gfx/Mt_Rolling3DS_01.png");
 	SpaceShip.load("models/spaceship.obj", "gfx/spaceship.JPG");
-
+	lamp.load("models/lamp.obj", "gfx/wood.JPG");
 	
 	SKYBOX = SOIL_load_OGL_texture(
 		"gfx/skybox.png",
@@ -207,39 +207,79 @@ void Scene::StartingRoom() {
 	startingBuilding.DisplayStand(0, -3);
 	glPopMatrix();
 
-	glPushMatrix();
-	glTranslatef(0, 1, 0);
-	glScalef(0.2, 0.2, 0.2);
-	Teapot.render();
-	glPopMatrix();
-
-
+	
 	glPushMatrix();
 	glRotatef(90, 0.2f, 1.0f, 0.0f);
-	glTranslatef(12.0f, 2.0f, 0.0f);
+	glTranslatef(12.0f, 1.0f, 0.0f);
 	glScalef(0.2f, 0.2f, 0.2f);
-	//GLfloat mat_diff_blue[] = { 0.1, 0.5, 0.8, 1.0 };
-	//glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, mat_diff_blue);
-
-	GLfloat mat_diff_blue[] = { 0.1, 0.5, 0.8, 1.0 };
-	GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0 };
-	GLfloat high_shininess = 100;
-	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, mat_diff_blue);
-	glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
-	glMateriali(GL_FRONT, GL_SHININESS, high_shininess);
 	material.MaterialSpecifics(1, 60);
-
 	NintendoDS.render();
 	glPopMatrix();
+
 
 	glPushMatrix();
 	glRotatef(90.f, 0.2f, 1.0f, 0.0f);
 	glTranslatef(-12.0f, 4.0f, 0.0f);
 	glScalef(2.0f, 2.0f, 2.0f);
+	material.MaterialSpecifics(1, 100);
 	SpaceShip.render();
 	glPopMatrix();
 }
 
+void Scene::RoomSpotlights() {
+	glPushMatrix();
+	glTranslatef(0.0f, 4.0f, -12.0f);
+	material.MaterialSpecifics(1, 60);
+	lighting.Spotlight();
+	glScalef(0.1, 0.1, 0.1);
+	lamp.render();
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(-12.0f, 4.0f, -12.0f);
+	material.MaterialSpecifics(1, 60);
+	lighting.Spotlight();
+	glScalef(0.1, 0.1, 0.1);
+	lamp.render();
+	glPopMatrix();
+
+
+	glPushMatrix();
+	glTranslatef(-24.0f, 4.0f, -12.0f);
+	material.MaterialSpecifics(1, 60);
+	lighting.Spotlight();
+	glScalef(0.1, 0.1, 0.1);
+	lighting.Spotlight();
+	lamp.render();
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(0.0f, 4.0f, 12.0f);
+	material.MaterialSpecifics(1, 60);
+	lighting.Spotlight();
+	glScalef(0.1, 0.1, 0.1);
+	lamp.render();
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(-12.0f, 4.0f, 12.0f);
+	material.MaterialSpecifics(1, 60);
+	lighting.Spotlight();
+	glScalef(0.1, 0.1, 0.1);
+	lamp.render();
+	glPopMatrix();
+
+
+	glPushMatrix();
+	glTranslatef(-24.0f, 4.0f, 12.0f);
+	material.MaterialSpecifics(1, 60);
+	lighting.Spotlight();
+	glScalef(0.1, 0.1, 0.1);
+	lamp.render();
+	glPopMatrix();
+
+
+}
 void Scene::Planet() {
 
 	glPushMatrix();
@@ -351,10 +391,7 @@ void Scene::render() {
 
 	glEnable(GL_DEPTH_TEST);
 	glPopMatrix();
-
-	glPushMatrix();
-	//lighting.Lighting1()
-	lighting.RoomLight();
+	RoomSpotlights();
 	glPopMatrix();
 
 	glPushMatrix();

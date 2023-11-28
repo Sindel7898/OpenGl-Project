@@ -37,6 +37,7 @@ public:
 	Model SpaceShip;
 	PrecuduallyGeneratedShapes Sphere;
 	Material material;
+	Model lamp;
 
 	GLint Earth;
 	
@@ -65,6 +66,7 @@ public:
 	void resize(int w, int h);
 	void Light();
 	void DrawCube();
+	void RoomSpotlights();
 	void Planet();
 	void StartingRoom();
 protected:

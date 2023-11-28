@@ -7,10 +7,11 @@
 // Further includes should go here:
 #include "SOIL.h"
 #include <vector>
+#include "Material.h"
 
 class StartingBuilding {
 	public:
-
+	Material material;
 	StartingBuilding();
 	void DisplayStand(int x, int z);
 	GLint Floor;

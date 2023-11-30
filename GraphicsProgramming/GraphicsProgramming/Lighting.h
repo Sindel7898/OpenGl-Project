@@ -13,10 +13,10 @@ class Lighting {
 public:
 
 	
-	Lighting();
+	
 	void Spotlight();
-	void Lighting1();
 	void RoomLight();
+	void sunlight();
 protected:
 	Input* input;
 };

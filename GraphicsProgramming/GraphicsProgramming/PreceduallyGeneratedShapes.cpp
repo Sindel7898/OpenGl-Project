@@ -1,56 +1,50 @@
 #include"PreceduallyGeneratedShapes.h"
 
-void PrecuduallyGeneratedShapes::Sphere(float r) {
-	glPushMatrix();
-	glTranslatef(3, 0, 0);
-	glBindTexture(GL_TEXTURE_2D, NULL);
-	float pi = 3.141592;
-	float di = 0.02;
-	float dj = 0.04;
-	float db = di * 2 * pi;
-	float da = dj * pi;
+
+void PrecuduallyGeneratedShapes :: Sphere(int resolution)
+{
+	m_resolution = resolution + 1;
+
+	float theta = (2 * 3.1415) / resolution;
+	float delta = 3.1415 / resolution;
+	float angle_lon = 0;
+	float angle_lat = 0;
+	float next_lon = 0;
+	float next_lat = 0;
 
 
-	for (float i = 0; i < 1.0; i += di) //horizonal
-		for (float j = 0; j < 1.0; j += dj) //vertical
+	glBegin(GL_QUADS);
+
+	for (int lon = 0; lon < m_resolution; lon++)
+	{
+		for (int lat = 0; lat < m_resolution; lat++)
 		{
-			float b = i * 2 * pi;      //0     to  2pi
-			float a = (j - 0.5) * pi;  //-pi/2 to pi/2
+			next_lat = angle_lat + theta;
+
+			//[lat][long]
+			glNormal3f(cos(angle_lat) * sin(angle_lon), cos(angle_lon), sin(angle_lat) * sin(angle_lon));
+			glVertex3f(cos(angle_lat) * sin(angle_lon), cos(angle_lon), sin(angle_lat) * sin(angle_lon));
+
+			//[lat][long + 1] 
+			glNormal3f(cos(next_lat) * sin(angle_lon), cos(angle_lon), sin(next_lat) * sin(angle_lon));
+			glVertex3f(cos(next_lat) * sin(angle_lon), cos(angle_lon), sin(next_lat) * sin(angle_lon));
+
+			//[lat + 1][long + 1] 
+			glNormal3f(cos(next_lat) * sin(next_lon), cos(next_lon), sin(next_lat) * sin(next_lon));
+			glVertex3f(cos(next_lat) * sin(next_lon), cos(next_lon), sin(next_lat) * sin(next_lon));
 
 
-			//normal
-			glNormal3f(
-				cos(a + da / 2) * cos(b + db / 2),
-				cos(a + da / 2) * sin(b + db / 2),
-				sin(a + da / 2));
+			//[lat + 1][lon]
+			glNormal3f(cos(angle_lat) * sin(next_lon), cos(next_lon), sin(angle_lat) * sin(next_lon));
+			glVertex3f(cos(angle_lat) * sin(next_lon), cos(next_lon), sin(angle_lat) * sin(next_lon));
 
-			glBegin(GL_QUADS);
-			//P1
-			glTexCoord2f(i, j);
-			glVertex3f(
-				r * cos(a) * cos(b),
-				r * cos(a) * sin(b),
-				r * sin(a));
-			//P2
-			glTexCoord2f(i + di, j);//P2
-			glVertex3f(
-				r * cos(a) * cos(b + db),
-				r * cos(a) * sin(b + db),
-				r * sin(a));
-			//P3
-			glTexCoord2f(i + di, j + dj);
-			glVertex3f(
-				r * cos(a + da) * cos(b + db),
-				r * cos(a + da) * sin(b + db),
-				r * sin(a + da));
-			//P4
-			glTexCoord2f(i, j + dj);
-			glVertex3f(
-				r * cos(a + da) * cos(b),
-				r * cos(a + da) * sin(b),
-				r * sin(a + da));
+
+			angle_lat = next_lat;
 		}
-	
-	glPopMatrix();
-
+		angle_lon = next_lon;
+		next_lon = angle_lon + delta;
+	}
+	glEnd();
 }
+
+

@@ -2,7 +2,6 @@
 
 
 Camera::Camera() {
-	//gluLookAt(0.0f, 0.0f, 6.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 	lookAt = Vector3(0.0f, 0.0f, 0.0f);
 	up = Vector3(0.0f, 1.0f, 0.0f);
 	position = Vector3(0.0f, 0.0f, 6.0f);

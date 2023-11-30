@@ -10,31 +10,24 @@ Scene::Scene(Input *in)
 
 	// Other OpenGL / render setting should be applied here.
 	// Initialise scene variables
-	glEnable(GL_LIGHTING);
-	glDisable(GL_COLOR_MATERIAL);
-
-	glShadeModel(GL_SMOOTH);
 	glEnable(GL_TEXTURE_2D);
+	glDisable(GL_COLOR_MATERIAL);
+	glEnable(GL_LIGHTING);
+
 
 
 	Teapot.load("models/teapot.obj", "gfx/crate.png");
 	NintendoDS.load("models/N_3DS.obj", "gfx/Mt_Rolling3DS_01.png");
 	SpaceShip.load("models/spaceship.obj", "gfx/spaceship.JPG");
-	lamp.load("models/lamp.obj", "gfx/wood.JPG");
-	
+	//lamp.load("models/lamp.obj", "gfx/wood.JPG");
+	Halo.load("models/chief.obj", "gfx/chief.png");
+	Drone.load("models/drone.obj", "gfx/Drone.JPG");
+
 	SKYBOX = SOIL_load_OGL_texture(
 		"gfx/skybox.png",
 		SOIL_LOAD_AUTO,
 		SOIL_CREATE_NEW_ID,
 		SOIL_FLAG_MIPMAPS | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT);
-
-
-	Earth = SOIL_load_OGL_texture(
-		"gfx/crate.png",
-		SOIL_LOAD_AUTO,
-		SOIL_CREATE_NEW_ID,
-		SOIL_FLAG_MIPMAPS | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT);
-
 
 
 }
@@ -57,6 +50,17 @@ void Scene::handleInput(float dt)
 		}
 	}
 
+	if (input->isKeyDown('f') || input->isKeyDown('F')) {
+		Switcher = 0;
+		input->setKeyUp('f');
+		input->setKeyUp('F');
+	}
+
+
+	if (input->isKeyDown('1')) {
+		Switcher = 1;
+		input->setKeyUp('1');
+	}
 
 	if (input->isKeyDown('w'))
 	{
@@ -219,11 +223,30 @@ void Scene::StartingRoom() {
 
 	glPushMatrix();
 	glRotatef(90.f, 0.2f, 1.0f, 0.0f);
-	glTranslatef(-12.0f, 4.0f, 0.0f);
+	glTranslatef(-12.0f, 3.0f, 0.0f);
 	glScalef(2.0f, 2.0f, 2.0f);
 	material.MaterialSpecifics(1, 100);
 	SpaceShip.render();
 	glPopMatrix();
+	glEnd();
+
+	glPushMatrix();
+	glScalef(4.0f, 4.0f, 4.0);
+	glTranslatef(-6.0f, 0.2f, 3.0f);
+	glRotatef(-80, 1.0f, 0.0f, 0.0f);
+	Halo.render();
+	glPopMatrix();
+
+	glPushMatrix();
+	glScalef(4.0f, 4.0f, 4.0);
+	//glTranslatef(12.0f, 3.0f, 0.0f);
+	//glRotatef(-80, 1.0f, 0.0f, 0.0f);
+	Drone.render();
+	glPopMatrix();
+
+
+
+
 }
 
 void Scene::RoomSpotlights() {
@@ -280,25 +303,7 @@ void Scene::RoomSpotlights() {
 
 
 }
-void Scene::Planet() {
-
-	glPushMatrix();
-	material.MaterialSpecifics(1, 60);
-	glBindTexture(GL_TEXTURE_2D, Earth);
-	glTranslatef(80, 10, 5.0f);
-	gluSphere(gluNewQuadric(), 6, 300, 300);
-	glPopMatrix();
-
-	glPushMatrix();
-	material.MaterialSpecifics(0.5, 20);
-	glScalef(1, 1, 1);
-	glRotatef(Rotation, 0.2f, 1.0f, 0.0f);
-	glTranslatef(100.0f, 10.0f, 0.0f);
-	glScalef(10.0f, 10.0f, 5.0f);
-	SpaceShip.render();
-	glPopMatrix();
-
-
+void Scene::OrbitSpaceShips() {
 	glPushMatrix();
 	material.MaterialSpecifics(0.5, 20);
 	glScalef(1, 1, 1);
@@ -371,10 +376,101 @@ void Scene::Planet() {
 	SpaceShip.render();
 	glPopMatrix();
 
+	glPushMatrix();
+	glScalef(1, 1, 1);
+	material.MaterialSpecifics(0.5, 20);
+	glRotatef(200 + Rotation, 0.2f, 1.0f, 0.0f);
+	glTranslatef(80.0f, 10.0f, 0.0f);
+	glScalef(10.0f, 10.0f, 5.0f);
+	SpaceShip.render();
+	glPopMatrix();
+
+	glPushMatrix();
+	glScalef(1, 1, 1);
+	material.MaterialSpecifics(0.5, 20);
+	glRotatef(2 + Rotation, 0.2f, 1.0f, 0.0f);
+	glTranslatef(100.0f, 10.0f, 0.0f);
+	glScalef(10.0f, 10.0f, 5.0f);
+	SpaceShip.render();
+	glPopMatrix();
+
+
+
 	
 }
 
 
+void Scene::solarSystem()
+{
+	glPushMatrix();
+	GLfloat Light_Diffuse[] = { 0.1f, 0.1f, 0.1f, 1.0f };
+	GLfloat Light_Position[] = { 0.3, 0.0, 5.7, 1.0f };
+
+	glLightfv(GL_LIGHT4, GL_DIFFUSE, Light_Diffuse);
+	glLightfv(GL_LIGHT4, GL_POSITION, Light_Position);
+	glLightf(GL_LIGHT4, GL_CONSTANT_ATTENUATION, 1);
+	glLightf(GL_LIGHT4, GL_LINEAR_ATTENUATION, 1);
+	glLightf(GL_LIGHT4, GL_QUADRATIC_ATTENUATION, 1);
+	glEnable(GL_LIGHT4);
+	glPopMatrix();
+
+	glPushMatrix();
+	// Materials
+	glDisable(GL_COLOR_MATERIAL);
+	GLfloat mat_diff_green[] = { 0.0, 0.6, 0.1, 1.0 };
+	GLfloat mat_diff_purple[] = { 0.4, 0.0, 0.7, 1.0 };
+	GLfloat mat_diff_blue[] = { 0.1, 0.5, 0.8, 1.0 };
+	GLfloat mat_diff_grey[] = { 0.4, 0.4, 0.4, 1.0 };
+	GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0 };
+	GLfloat high_shininess = 100;
+
+	// Sun
+	glPushMatrix();
+	glTranslatef(-12.0f, 3.0f, 12.0f);
+	glScalef(1.0, 1.0, 1.0);
+	glDisable(GL_LIGHTING);
+	glColor3f(1, 1, 0);
+	gluSphere(gluNewQuadric(), 0.5, 40, 40);
+	glEnable(GL_LIGHTING);
+	glPopMatrix();
+
+	// Planet 1 - Blue
+	glPushMatrix();
+	glTranslatef(-11.6f, 3.5f, 12.0f);
+	glScalef(0.7, 0.7, 0.7);
+	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, mat_diff_blue);
+	glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+	glMateriali(GL_FRONT, GL_SHININESS, high_shininess);
+	gluSphere(gluNewQuadric(), 0.5, 40, 40);
+	glPopMatrix();
+
+	// Planet 2 - Purple
+	glPushMatrix();
+	glTranslatef(-12.6f, 3.5f, 12.0f);
+	glScalef(0.7, 0.7, 0.7);
+	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, mat_diff_purple);
+	glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+	glMateriali(GL_FRONT, GL_SHININESS, high_shininess);
+	gluSphere(gluNewQuadric(), 0.5, 40, 40);
+	glPopMatrix();
+
+	glEnable(GL_COLOR_MATERIAL);
+	glPopMatrix();
+}
+
+void Scene::cameraSwitcher() {
+
+	switch (Switcher) {
+	case 0:gluLookAt(camera.getPosX(), camera.getPosY(), camera.getPosZ(), camera.getLookAtX(), camera.getLookAtY(), camera.getLookAtZ(), camera.getUpX(), camera.getUpY(), camera.getUpZ());
+		
+
+
+
+
+	case 1:gluLookAt(20.0f, 9.0f, 5.0f, 0, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f);
+
+	}
+}
 void Scene::render() {
 
 	// Clear Color and Depth Buffers
@@ -383,12 +479,11 @@ void Scene::render() {
 	// Reset transformations
 	glLoadIdentity();
 	// Set the camera
-	gluLookAt(camera.getPosX(), camera.getPosY(), camera.getPosZ(), camera.getLookAtX(), camera.getLookAtY(), camera.getLookAtZ(), camera.getUpX(), camera.getUpY(), camera.getUpZ());
+	cameraSwitcher();
 	// Render geometry/scene here -------------------------------------
 	glPushMatrix();
 	glDisable(GL_DEPTH_TEST);
 	DrawCube();
-
 	glEnable(GL_DEPTH_TEST);
 	glPopMatrix();
 	RoomSpotlights();
@@ -399,8 +494,20 @@ void Scene::render() {
     glPopMatrix();
 
 	glPushMatrix();
-	Planet();
+	OrbitSpaceShips();
 	glPopMatrix();
+
+	glPushMatrix();
+	lighting.RoomLight();
+	glPopMatrix();
+
+
+	glPushMatrix();
+	solarSystem();
+	glPopMatrix();
+
+	
+
 
 	// End render geometry --------------------------------------
 	glEnd();

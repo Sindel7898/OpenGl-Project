@@ -102,6 +102,7 @@ void StartingBuilding::Building() {
 
 void StartingBuilding::DisplayStand(int x, int z) {
 	glPushMatrix();
+	material.MaterialSpecifics(1, 40);
 	glRotatef(90, 0, 0, 1);
 	glScalef(4, 3, 4);
 	glTranslatef(-0.4, x, z);
@@ -167,8 +168,6 @@ void StartingBuilding::DisplayStand(int x, int z) {
 	glVertex3f(0.5f, -0.5f, 0.5f);
 	glTexCoord2f(1.0f, 0.5f);
 	glVertex3f(-0.5f, -0.5f, 0.5f);
-
-	material.MaterialSpecifics(1, 40);
 	glEnd();
 	glPopMatrix();
 

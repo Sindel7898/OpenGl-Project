@@ -35,11 +35,12 @@ public:
 	Model Teapot;
 	Model NintendoDS;
 	Model SpaceShip;
-	PrecuduallyGeneratedShapes Sphere;
+	PrecuduallyGeneratedShapes precuduallyGeneratedShapes;
 	Material material;
 	Model lamp;
+	Model Halo;
+	Model Drone;
 
-	GLint Earth;
 	
 
 	int renderType = 0;
@@ -48,7 +49,7 @@ public:
 	float upward = 0 ;
 	float forward = 0;
 
-
+	int Switcher = 0;
 
 	float Rotation;
 	//GLuint SKYBOX;
@@ -56,6 +57,9 @@ public:
 	float yDiff = 0;
 
 	Scene(Input *in);
+	void OrbitSpaceShips();
+	void solarSystem();
+	void cameraSwitcher();
 	// Main render function
 	void render();
 	// Handle input function that receives delta time from parent.

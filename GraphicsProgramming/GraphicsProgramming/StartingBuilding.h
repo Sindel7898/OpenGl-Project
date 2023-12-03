@@ -14,6 +14,7 @@ class StartingBuilding {
 	Material material;
 	StartingBuilding();
 	void DisplayStand(int x, int z);
+	void ReflectionStand(int x, int z);
 	GLint Floor;
 	GLint Wall;
 	GLint Stand;

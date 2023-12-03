@@ -15,7 +15,7 @@
 // Further includes should go here:
 #include "SOIL.h"
 #include <vector>
-
+#include <irrKlang.h>
 #include "model.h"
 #include "Skybox.h"
 #include "Camera1.h"
@@ -23,7 +23,8 @@
 #include "Lighting.h"
 #include "PreceduallyGeneratedShapes.h"
 #include "material.h"
-
+using namespace irrklang;
+// for the audio system im using in this project  https://www.ambiera.com/irrklang/
 class Scene{
 
 public:
@@ -40,7 +41,9 @@ public:
 	Model lamp;
 	Model Halo;
 	Model Drone;
-
+	Model Radio;
+	Model DocOc;
+	
 	
 
 	int renderType = 0;
@@ -48,7 +51,7 @@ public:
 	float right = 0 ;
 	float upward = 0 ;
 	float forward = 0;
-
+	float ReflectionRotaion;
 	int Switcher = 0;
 
 	float Rotation;
@@ -60,6 +63,7 @@ public:
 	void OrbitSpaceShips();
 	void solarSystem();
 	void cameraSwitcher();
+	void Music();
 	// Main render function
 	void render();
 	// Handle input function that receives delta time from parent.
@@ -72,6 +76,8 @@ public:
 	void DrawCube();
 	void RoomSpotlights();
 	void Planet();
+	void ReflectionFloor();
+	void Reflection();
 	void StartingRoom();
 protected:
 	// configure opengl render pipeline

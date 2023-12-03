@@ -172,3 +172,67 @@ void StartingBuilding::DisplayStand(int x, int z) {
 	glPopMatrix();
 
 }
+
+
+void StartingBuilding::ReflectionStand(int x, int z) {
+	glPushMatrix();
+	material.MaterialSpecifics(1, 40);
+	glRotatef(90, 0, 0, 1);
+	glScalef(4, 3, 4);
+	glTranslatef(-0.4, x, z);
+	glBindTexture(GL_TEXTURE_2D, Stand);
+	glBegin(GL_QUADS);
+
+	glTexCoord2f(0.25f, 0.25f);
+	glVertex3f(-0.5f, 0.5f, -0.5f);
+	glTexCoord2f(0.75f, 0.25f);
+	glVertex3f(0.5f, 0.5f, -0.5f);
+	glTexCoord2f(0.75f, 0.75f);
+	glVertex3f(0.5f, -0.5f, -0.5f);
+	glTexCoord2f(0.25f, 0.75f);
+	glVertex3f(-0.5f, -0.5f, -0.5f);
+
+	//Bottom Face
+	glTexCoord2f(0.25f, 0.75f);
+	glVertex3f(-0.5f, -0.5f, 0.5f);
+	glTexCoord2f(0.75f, 0.75f);
+	glVertex3f(0.5f, -0.5f, 0.5f);
+	glTexCoord2f(0.75f, 1.0f);
+	glVertex3f(0.5f, -0.5f, -0.5f);
+	glTexCoord2f(0.25f, 1.0f);
+	glVertex3f(-0.5f, -0.5f, -0.5f);
+
+	//Left Face
+	glTexCoord2f(0.25f, 0.25f);
+	glVertex3f(-0.5f, 0.5f, -0.5f);
+	glTexCoord2f(0.0f, 0.25f);
+	glVertex3f(-0.5f, 0.5f, 0.5f);
+	glTexCoord2f(0.0f, 0.5f);
+	glVertex3f(-0.5f, -0.5f, 0.5f);
+	glTexCoord2f(0.25f, 0.5f);
+	glVertex3f(-0.5f, -0.5f, -0.5f);
+
+
+	//Top Face
+	glTexCoord2f(0.25f, 0.0f);
+	glVertex3f(-0.5f, 0.5f, 0.5f);
+	glTexCoord2f(0.75f, 0.0f);
+	glVertex3f(0.5f, 0.5f, 0.5f);
+	glTexCoord2f(0.75f, 0.25f);
+	glVertex3f(0.5f, 0.5f, -0.5f);
+	glTexCoord2f(0.25f, 0.25f);
+	glVertex3f(-0.5f, 0.5f, -0.5f);
+
+	//Back Face
+	glTexCoord2f(1.0f, 0.25f);
+	glVertex3f(-0.5f, 0.5f, 0.5f);
+	glTexCoord2f(0.75f, 0.25f);
+	glVertex3f(0.5f, 0.5f, 0.5f);
+	glTexCoord2f(0.75f, 0.5f);
+	glVertex3f(0.5f, -0.5f, 0.5f);
+	glTexCoord2f(1.0f, 0.5f);
+	glVertex3f(-0.5f, -0.5f, 0.5f);
+	glEnd();
+	glPopMatrix();
+
+}

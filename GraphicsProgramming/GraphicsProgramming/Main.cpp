@@ -150,6 +150,7 @@ void processMouseButtons(int button, int state, int x, int y)
 // Initialises Input and Scene class, prior to starting Main Loop.
 int main(int argc, char **argv) 
 {
+	
 
 	// Init GLUT and create window
 	glutInit(&argc, argv);
@@ -163,6 +164,7 @@ int main(int argc, char **argv)
 	glutReshapeFunc(changeSize);
 	glutIdleFunc(renderScene);
 
+	
 	// Register Input callback functions.
 	glutKeyboardFunc(processNormalKeys);
 	glutKeyboardUpFunc(processNormalKeysUp);

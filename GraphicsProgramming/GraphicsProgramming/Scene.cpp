@@ -19,9 +19,15 @@ Scene::Scene(Input *in)
 	Teapot.load("models/teapot.obj", "gfx/crate.png");
 	NintendoDS.load("models/N_3DS.obj", "gfx/Mt_Rolling3DS_01.png");
 	SpaceShip.load("models/spaceship.obj", "gfx/spaceship.JPG");
-	//lamp.load("models/lamp.obj", "gfx/wood.JPG");
+	lamp.load("models/lamp.obj", "gfx/wood.JPG");
 	Halo.load("models/chief.obj", "gfx/chief.png");
 	Drone.load("models/drone.obj", "gfx/Drone.JPG");
+	Radio.load("models/Radio.obj", "gfx/Radio.PNG");
+	DocOc.load("models/Doctor Octopus.obj", "gfx/body.PNG");
+
+
+
+
 
 	SKYBOX = SOIL_load_OGL_texture(
 		"gfx/skybox.png",
@@ -29,7 +35,9 @@ Scene::Scene(Input *in)
 		SOIL_CREATE_NEW_ID,
 		SOIL_FLAG_MIPMAPS | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT);
 
-
+	ISoundEngine* engine = createIrrKlangDevice();
+	ISound* music1 = engine->play3D("Music/jazz.mp3", vec3df(13, 0, 0), true, false, true);
+	music1->setVolume(20);
 }
 
 void Scene::handleInput(float dt)
@@ -60,6 +68,16 @@ void Scene::handleInput(float dt)
 	if (input->isKeyDown('1')) {
 		Switcher = 1;
 		input->setKeyUp('1');
+	}
+
+	if (input->isKeyDown('2')) {
+		Switcher = 2;
+		input->setKeyUp('2');
+	}
+
+	if (input->isKeyDown('3')) {
+		Switcher = 3;
+		input->setKeyUp('3');
 	}
 
 	if (input->isKeyDown('w'))
@@ -111,12 +129,15 @@ void Scene::handleInput(float dt)
 
 
 
-
 void Scene::update(float dt)
 {
 	// update scene related variables.
 	
 		Rotation += 40 * dt;
+
+		if (input->isKeyDown('q') || input->isKeyDown('q')) {
+			ReflectionRotaion += 40 * dt;
+		}
 	
 	// Calculate FPS for output
 	calculateFPS();
@@ -128,7 +149,14 @@ void Scene::DrawCube() {
 	glPushMatrix();
 
 	glBindTexture(GL_TEXTURE_2D, SKYBOX);
-	glTranslatef(camera.getPosX(), camera.getPosY(), camera.getPosZ());
+	if (Switcher == 3) {
+		glTranslatef(-40, 90, -10);
+	}
+	else
+	{
+		glTranslatef(camera.getPosX(), camera.getPosY(), camera.getPosZ());
+
+	}
 	/*skybox.drawSkybox();*/
 	glBegin(GL_QUADS);
 
@@ -195,6 +223,65 @@ void Scene::DrawCube() {
 	
 }
 
+
+void Scene::ReflectionFloor() {
+	glPushMatrix();
+	glScalef(2, 2, 2);
+	glTranslatef(-1, 0.25, 6);
+	glRotatef(90, 1, 0, 0);
+
+	glBegin(GL_QUADS);
+	glVertex3f(2.0f, 1.0f, 0.0f);
+	glVertex3f(2.0f, -1.0f, 0.0f);
+	glVertex3f(0.0f, -1.0f, 0.0f);
+	glVertex3f(0.0f, 1.0f, 0.0f);
+	glPopMatrix();
+	glEnd();
+}
+
+void Scene::Reflection() {
+	glPushMatrix();
+	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+	glEnable(GL_STENCIL_TEST);
+	glStencilFunc(GL_ALWAYS, 1, 1);
+	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+	glDisable(GL_DEPTH_TEST);
+
+	ReflectionFloor();
+
+
+	glEnable(GL_DEPTH_TEST);
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+	glStencilFunc(GL_EQUAL, 1, 1);
+	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+
+
+	glPushMatrix();
+	glTranslatef(0.8f, -0.1f, 0.6f);
+	glScalef(0.05f, 0.05f, 0.05f);
+	glRotatef(ReflectionRotaion, 1, 0, 0);
+	Teapot.render();
+	glPopMatrix();
+
+	glDisable(GL_STENCIL_TEST);
+	glEnable(GL_BLEND);
+	glDisable(GL_LIGHTING);
+	glColor4f(0.8f, 0.8f, 1.0f, 0.8f);
+	ReflectionFloor();
+	glEnable(GL_LIGHTING);
+	glDisable(GL_BLEND);
+
+	glPushMatrix();
+	glTranslatef(0.8f, -0.1f, -0.6f);
+	glScalef(0.05f, 0.05f, 0.05f);
+	glRotatef(ReflectionRotaion, -1, 0, 0);
+	Teapot.render();
+	glPopMatrix();
+
+	glPopMatrix();
+
+
+}
 void Scene::StartingRoom() {
 
 	glPushMatrix();
@@ -204,7 +291,7 @@ void Scene::StartingRoom() {
 	glPushMatrix();
 	startingBuilding.DisplayStand(8, 3);
 	startingBuilding.DisplayStand(4, 3);
-	startingBuilding.DisplayStand(0, 3);
+	startingBuilding.ReflectionStand(0, 3);
 	//opposite side of building
 	startingBuilding.DisplayStand(8, -3);
 	startingBuilding.DisplayStand(4, -3);
@@ -221,82 +308,88 @@ void Scene::StartingRoom() {
 	glPopMatrix();
 
 
-	glPushMatrix();
-	glRotatef(90.f, 0.2f, 1.0f, 0.0f);
-	glTranslatef(-12.0f, 3.0f, 0.0f);
-	glScalef(2.0f, 2.0f, 2.0f);
+	/*glPushMatrix();
+	glTranslatef(0.0f, 2.0f, 12.0f);
+	glScalef(0.1f, 0.1f, 0.1f);
 	material.MaterialSpecifics(1, 100);
-	SpaceShip.render();
+	Teapot.render();
 	glPopMatrix();
-	glEnd();
+	glEnd();*/
 
 	glPushMatrix();
-	glScalef(4.0f, 4.0f, 4.0);
-	glTranslatef(-6.0f, 0.2f, 3.0f);
-	glRotatef(-80, 1.0f, 0.0f, 0.0f);
-	Halo.render();
+	glTranslatef(-24.0f, 1.2f, 13.0f);
+	glRotatef(Rotation, 0, 1, 0);
+	material.MaterialSpecifics(1, 100);
+	DocOc.render();
 	glPopMatrix();
 
 	glPushMatrix();
-	glScalef(4.0f, 4.0f, 4.0);
-	//glTranslatef(12.0f, 3.0f, 0.0f);
-	//glRotatef(-80, 1.0f, 0.0f, 0.0f);
+	glTranslatef(-24, 2, -12.0);
+	glScalef(70.0f, 70.0f, 70.0);
+	material.MaterialSpecifics(1, 100);
 	Drone.render();
 	glPopMatrix();
 
+	glPushMatrix();
+	glTranslatef(-12, 1, -12);
+	glScalef(0.4f, 0.4f, 0.4f);
+	material.MaterialSpecifics(1, 100);
+	Radio.render();
+	glPopMatrix();
 
+
+	
 
 
 }
 
 void Scene::RoomSpotlights() {
+
+	lighting.Spotlight();
 	glPushMatrix();
 	glTranslatef(0.0f, 4.0f, -12.0f);
 	material.MaterialSpecifics(1, 60);
-	lighting.Spotlight();
 	glScalef(0.1, 0.1, 0.1);
 	lamp.render();
 	glPopMatrix();
 
+	lighting.Spotlight();
 	glPushMatrix();
 	glTranslatef(-12.0f, 4.0f, -12.0f);
 	material.MaterialSpecifics(1, 60);
-	lighting.Spotlight();
 	glScalef(0.1, 0.1, 0.1);
 	lamp.render();
 	glPopMatrix();
 
-
+	lighting.Spotlight();
 	glPushMatrix();
 	glTranslatef(-24.0f, 4.0f, -12.0f);
 	material.MaterialSpecifics(1, 60);
 	lighting.Spotlight();
 	glScalef(0.1, 0.1, 0.1);
-	lighting.Spotlight();
 	lamp.render();
 	glPopMatrix();
 
+	lighting.Spotlight();
 	glPushMatrix();
 	glTranslatef(0.0f, 4.0f, 12.0f);
 	material.MaterialSpecifics(1, 60);
-	lighting.Spotlight();
 	glScalef(0.1, 0.1, 0.1);
 	lamp.render();
 	glPopMatrix();
 
+	lighting.Spotlight();
 	glPushMatrix();
 	glTranslatef(-12.0f, 4.0f, 12.0f);
 	material.MaterialSpecifics(1, 60);
-	lighting.Spotlight();
 	glScalef(0.1, 0.1, 0.1);
 	lamp.render();
 	glPopMatrix();
 
-
+	lighting.Spotlight();
 	glPushMatrix();
 	glTranslatef(-24.0f, 4.0f, 12.0f);
 	material.MaterialSpecifics(1, 60);
-	lighting.Spotlight();
 	glScalef(0.1, 0.1, 0.1);
 	lamp.render();
 	glPopMatrix();
@@ -460,21 +553,43 @@ void Scene::solarSystem()
 
 void Scene::cameraSwitcher() {
 
-	switch (Switcher) {
-	case 0:gluLookAt(camera.getPosX(), camera.getPosY(), camera.getPosZ(), camera.getLookAtX(), camera.getLookAtY(), camera.getLookAtZ(), camera.getUpX(), camera.getUpY(), camera.getUpZ());
-		
-
-
-
-
-	case 1:gluLookAt(20.0f, 9.0f, 5.0f, 0, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f);
+	if (Switcher == 0) {
+		gluLookAt(camera.getPosX(), camera.getPosY(), camera.getPosZ(), camera.getLookAtX(), camera.getLookAtY(), camera.getLookAtZ(), camera.getUpX(), camera.getUpY(), camera.getUpZ());
 
 	}
+
+	if (Switcher == 1) {
+		gluLookAt(-40.0f, 10.0f, -10.0f, 0, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f);
+		if (Switcher != 1) {
+			gluLookAt(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+
+		}
+	}
+
+
+	if (Switcher == 2) {
+		gluLookAt(40.0f, 10.0f, -10.0f, 0, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f);
+		if (Switcher != 2) {
+			gluLookAt(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+
+		}
+	}
+	
+	if (Switcher == 3) {
+		gluLookAt(-40.0f, 90.0f, -10.0f, 0, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f);
+		if (Switcher != 3) {
+			gluLookAt(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+
+		}
+	}
+
+
 }
+
 void Scene::render() {
 
 	// Clear Color and Depth Buffers
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 	// Reset transformations
 	glLoadIdentity();
@@ -498,7 +613,7 @@ void Scene::render() {
 	glPopMatrix();
 
 	glPushMatrix();
-	lighting.RoomLight();
+	//lighting.RoomLight();
 	glPopMatrix();
 
 
@@ -506,8 +621,9 @@ void Scene::render() {
 	solarSystem();
 	glPopMatrix();
 
-	
-
+	glPushMatrix();
+	Reflection();
+	glPopMatrix();
 
 	// End render geometry --------------------------------------
 	glEnd();
@@ -529,6 +645,8 @@ void Scene::initialiseOpenGL()
 	glDepthFunc(GL_LEQUAL);								// The Type Of Depth Testing To Do
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);	// Really Nice Perspective Calculations
 	glLightModelf(GL_LIGHT_MODEL_LOCAL_VIEWER, 1);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);	// Blending function
+
 }
 
 // Handles the resize of the window. If the window changes size the perspective matrix requires re-calculation to match new window size.
@@ -617,3 +735,4 @@ void Scene::displayText(float x, float y, float r, float g, float b, char* strin
 	gluPerspective(fov, ((float)width/(float)height), nearPlane, farPlane);
 	glMatrixMode(GL_MODELVIEW);
 }
+

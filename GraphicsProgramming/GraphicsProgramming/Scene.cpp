@@ -19,7 +19,7 @@ Scene::Scene(Input *in)
 	Teapot.load("models/teapot.obj", "gfx/crate.png");
 	NintendoDS.load("models/N_3DS.obj", "gfx/Mt_Rolling3DS_01.png");
 	SpaceShip.load("models/spaceship.obj", "gfx/spaceship.JPG");
-	lamp.load("models/lamp.obj", "gfx/wood.JPG");
+	//lamp.load("models/lamp.obj", "gfx/wood.JPG");
 	Halo.load("models/chief.obj", "gfx/chief.png");
 	Drone.load("models/drone.obj", "gfx/Drone.JPG");
 	Radio.load("models/Radio.obj", "gfx/Radio.PNG");
@@ -358,8 +358,13 @@ void Scene::RoomSpotlights() {
 	lamp.render();
 	glPopMatrix();
 
+
 	glPushMatrix();
+	glTranslatef(-12.0f, 5.0f, -12.0f);
 	lighting.ChangingSpotlight(ColorSwitcher);
+	glPopMatrix();
+
+	glPushMatrix();
 	glTranslatef(-12.0f, 4.0f, -12.0f);
 	material.MaterialSpecifics(1, 60);
 	glScalef(0.1, 0.1, 0.1);
@@ -368,7 +373,7 @@ void Scene::RoomSpotlights() {
 
 	glPushMatrix();
 	glTranslatef(-24.0f, 5.0f, -12.0f);
-	lighting.Spotlight(GL_LIGHT2);
+	lighting.Spotlight(GL_LIGHT1);
 	glPopMatrix();
 
 	glPushMatrix();
@@ -381,7 +386,7 @@ void Scene::RoomSpotlights() {
 
 	glPushMatrix();
 	glTranslatef(0.0f, 5.0f, 12.0f);
-	lighting.Spotlight(GL_LIGHT3);
+	lighting.Spotlight(GL_LIGHT2);
 	glPopMatrix();
 
 	glPushMatrix();
@@ -393,7 +398,7 @@ void Scene::RoomSpotlights() {
 
 	glPushMatrix();
 	glTranslatef(-12.0f, 5.0f, 12.0f);
-	lighting.Spotlight(GL_LIGHT4);
+	lighting.Spotlight(GL_LIGHT3);
 	glPopMatrix();
 
 	glPushMatrix();
@@ -404,7 +409,7 @@ void Scene::RoomSpotlights() {
 	glPopMatrix();
 
 	glPushMatrix();
-	glTranslatef(-12.0f, 5.0f, 12.0f);
+	glTranslatef(-24.0f, 4.0f, 12.0f);
 	lighting.Spotlight(GL_LIGHT5);
 	glPopMatrix();
 

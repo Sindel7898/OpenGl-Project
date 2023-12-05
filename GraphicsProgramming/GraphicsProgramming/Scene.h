@@ -45,8 +45,9 @@ public:
 	Model DocOc;
 	
 	
-
+	int ColorSwitcher;
 	int renderType = 0;
+
 
 	float right = 0 ;
 	float upward = 0 ;

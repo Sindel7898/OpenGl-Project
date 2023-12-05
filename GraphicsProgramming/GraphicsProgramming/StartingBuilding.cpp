@@ -107,8 +107,11 @@ void StartingBuilding::DisplayStand(int x, int z) {
 	glScalef(4, 3, 4);
 	glTranslatef(-0.4, x, z);
 	glBindTexture(GL_TEXTURE_2D, Stand);
+
 	glBegin(GL_QUADS);
 
+	// Front Face
+	glNormal3f(0, 0, -1);
 	glTexCoord2f(0.25f, 0.25f);
 	glVertex3f(-0.5f, 0.5f, -0.5f);
 	glTexCoord2f(0.75f, 0.25f);
@@ -118,7 +121,8 @@ void StartingBuilding::DisplayStand(int x, int z) {
 	glTexCoord2f(0.25f, 0.75f);
 	glVertex3f(-0.5f, -0.5f, -0.5f);
 
-	//Right Face
+	// Right Face
+	glNormal3f(1, 0, 0);
 	glTexCoord2f(0.75f, 0.25f);
 	glVertex3f(0.5f, 0.5f, -0.5f);
 	glTexCoord2f(1.0f, 0.25f);
@@ -128,7 +132,8 @@ void StartingBuilding::DisplayStand(int x, int z) {
 	glTexCoord2f(0.75f, 0.75f);
 	glVertex3f(0.5f, -0.5f, -0.5f);
 
-	//Bottom Face
+	// Bottom Face
+	glNormal3f(0, -1, 0);
 	glTexCoord2f(0.25f, 0.75f);
 	glVertex3f(-0.5f, -0.5f, 0.5f);
 	glTexCoord2f(0.75f, 0.75f);
@@ -138,7 +143,8 @@ void StartingBuilding::DisplayStand(int x, int z) {
 	glTexCoord2f(0.25f, 1.0f);
 	glVertex3f(-0.5f, -0.5f, -0.5f);
 
-	//Left Face
+	// Left Face
+	glNormal3f(-1, 0, 0);
 	glTexCoord2f(0.25f, 0.25f);
 	glVertex3f(-0.5f, 0.5f, -0.5f);
 	glTexCoord2f(0.0f, 0.25f);
@@ -148,8 +154,8 @@ void StartingBuilding::DisplayStand(int x, int z) {
 	glTexCoord2f(0.25f, 0.5f);
 	glVertex3f(-0.5f, -0.5f, -0.5f);
 
-
-	//Top Face
+	// Top Face
+	glNormal3f(0, 1, 0);
 	glTexCoord2f(0.25f, 0.0f);
 	glVertex3f(-0.5f, 0.5f, 0.5f);
 	glTexCoord2f(0.75f, 0.0f);
@@ -159,7 +165,8 @@ void StartingBuilding::DisplayStand(int x, int z) {
 	glTexCoord2f(0.25f, 0.25f);
 	glVertex3f(-0.5f, 0.5f, -0.5f);
 
-	//Back Face
+	// Back Face
+	glNormal3f(0, 0, 1);
 	glTexCoord2f(1.0f, 0.25f);
 	glVertex3f(-0.5f, 0.5f, 0.5f);
 	glTexCoord2f(0.75f, 0.25f);
@@ -168,6 +175,7 @@ void StartingBuilding::DisplayStand(int x, int z) {
 	glVertex3f(0.5f, -0.5f, 0.5f);
 	glTexCoord2f(1.0f, 0.5f);
 	glVertex3f(-0.5f, -0.5f, 0.5f);
+
 	glEnd();
 	glPopMatrix();
 

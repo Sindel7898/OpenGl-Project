@@ -43,6 +43,16 @@ Scene::Scene(Input *in)
 void Scene::handleInput(float dt)
 {
 	// Handle user input
+
+	if (input->isKeyDown('l') || input->isKeyDown('L')) {
+		ColorSwitcher++;
+
+		if (ColorSwitcher > 3) {
+			ColorSwitcher = 0;
+		}
+		input->setKeyUp('l');
+		input->setKeyUp('L');
+	}
 	if (input->isKeyDown('r') || input->isKeyDown('R')) {
 		glPolygonMode(GL_FRONT, GL_LINE);
 		glPolygonMode(GL_BACK, GL_LINE);
@@ -307,15 +317,6 @@ void Scene::StartingRoom() {
 	NintendoDS.render();
 	glPopMatrix();
 
-
-	/*glPushMatrix();
-	glTranslatef(0.0f, 2.0f, 12.0f);
-	glScalef(0.1f, 0.1f, 0.1f);
-	material.MaterialSpecifics(1, 100);
-	Teapot.render();
-	glPopMatrix();
-	glEnd();*/
-
 	glPushMatrix();
 	glTranslatef(-24.0f, 1.2f, 13.0f);
 	glRotatef(Rotation, 0, 1, 0);
@@ -345,7 +346,11 @@ void Scene::StartingRoom() {
 
 void Scene::RoomSpotlights() {
 
-	lighting.Spotlight();
+	glPushMatrix();
+	glTranslatef(0.0f, 5.0f, -12.0f);
+	lighting.Spotlight(GL_LIGHT0);
+	glPopMatrix();
+
 	glPushMatrix();
 	glTranslatef(0.0f, 4.0f, -12.0f);
 	material.MaterialSpecifics(1, 60);
@@ -353,24 +358,32 @@ void Scene::RoomSpotlights() {
 	lamp.render();
 	glPopMatrix();
 
-	lighting.Spotlight();
 	glPushMatrix();
+	lighting.ChangingSpotlight(ColorSwitcher);
 	glTranslatef(-12.0f, 4.0f, -12.0f);
 	material.MaterialSpecifics(1, 60);
 	glScalef(0.1, 0.1, 0.1);
 	lamp.render();
 	glPopMatrix();
 
-	lighting.Spotlight();
+	glPushMatrix();
+	glTranslatef(-24.0f, 5.0f, -12.0f);
+	lighting.Spotlight(GL_LIGHT2);
+	glPopMatrix();
+
 	glPushMatrix();
 	glTranslatef(-24.0f, 4.0f, -12.0f);
 	material.MaterialSpecifics(1, 60);
-	lighting.Spotlight();
 	glScalef(0.1, 0.1, 0.1);
 	lamp.render();
 	glPopMatrix();
+	
 
-	lighting.Spotlight();
+	glPushMatrix();
+	glTranslatef(0.0f, 5.0f, 12.0f);
+	lighting.Spotlight(GL_LIGHT3);
+	glPopMatrix();
+
 	glPushMatrix();
 	glTranslatef(0.0f, 4.0f, 12.0f);
 	material.MaterialSpecifics(1, 60);
@@ -378,7 +391,11 @@ void Scene::RoomSpotlights() {
 	lamp.render();
 	glPopMatrix();
 
-	lighting.Spotlight();
+	glPushMatrix();
+	glTranslatef(-12.0f, 5.0f, 12.0f);
+	lighting.Spotlight(GL_LIGHT4);
+	glPopMatrix();
+
 	glPushMatrix();
 	glTranslatef(-12.0f, 4.0f, 12.0f);
 	material.MaterialSpecifics(1, 60);
@@ -386,7 +403,11 @@ void Scene::RoomSpotlights() {
 	lamp.render();
 	glPopMatrix();
 
-	lighting.Spotlight();
+	glPushMatrix();
+	glTranslatef(-12.0f, 5.0f, 12.0f);
+	lighting.Spotlight(GL_LIGHT5);
+	glPopMatrix();
+
 	glPushMatrix();
 	glTranslatef(-24.0f, 4.0f, 12.0f);
 	material.MaterialSpecifics(1, 60);

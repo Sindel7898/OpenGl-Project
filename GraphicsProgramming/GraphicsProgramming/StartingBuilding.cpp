@@ -75,14 +75,25 @@ void StartingBuilding::Building() {
 
 
 	//Top Face
-	glTexCoord2f(0.25f, 0.0f);
-	glVertex3f(-0.5f, 0.5f, 0.5f);
-	glTexCoord2f(0.75f, 0.0f);
-	glVertex3f(0.5f, 0.5f, 0.5f);
-	glTexCoord2f(0.75f, 0.25f);
-	glVertex3f(0.5f, 0.5f, -0.5f);
-	glTexCoord2f(0.25f, 0.25f);
-	glVertex3f(-0.5f, 0.5f, -0.5f);
+	if (RoofRemover == 1) {
+
+		glVertex3f(0, 0, 0);
+		glVertex3f(0, 0, 0);
+		glVertex3f(0, 0, 0);
+		glVertex3f(0, 0, 0);
+	}
+	else
+	{
+		glTexCoord2f(0.25f, 0.0f);
+		glVertex3f(-0.5f, 0.5f, 0.5f);
+		glTexCoord2f(0.75f, 0.0f);
+		glVertex3f(0.5f, 0.5f, 0.5f);
+		glTexCoord2f(0.75f, 0.25f);
+		glVertex3f(0.5f, 0.5f, -0.5f);
+		glTexCoord2f(0.25f, 0.25f);
+		glVertex3f(-0.5f, 0.5f, -0.5f);
+	}
+	
 
 	//Back Face
 	glTexCoord2f(1.0f, 0.25f);

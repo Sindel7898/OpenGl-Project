@@ -33,6 +33,10 @@ public:
 	StartingBuilding startingBuilding;
 	Lighting lighting;
 	GLint SKYBOX;
+	GLint SKYBOX1;
+	GLint SKYBOX2;
+
+
 	Model Teapot;
 	Model NintendoDS;
 	Model SpaceShip;
@@ -43,8 +47,9 @@ public:
 	Model Drone;
 	Model Radio;
 	Model DocOc;
-	
-	
+	Model Chair;
+
+	int SkyBoxChanger = 1;
 	int ColorSwitcher;
 	int renderType = 0;
 
@@ -54,7 +59,6 @@ public:
 	float forward = 0;
 	float ReflectionRotaion;
 	int Switcher = 0;
-
 	float Rotation;
 	//GLuint SKYBOX;
 	float xDiff = 0;
@@ -64,8 +68,6 @@ public:
 	void OrbitSpaceShips();
 	void solarSystem();
 	void cameraSwitcher();
-	void Music();
-	void TransparantPlane();
 	void TrasnparentBox();
 	// Main render function
 	void render();

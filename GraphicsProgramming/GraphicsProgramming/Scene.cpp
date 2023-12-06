@@ -34,6 +34,19 @@ Scene::Scene(Input *in)
 		SOIL_CREATE_NEW_ID,
 		SOIL_FLAG_MIPMAPS | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT);
 
+	SKYBOX1 = SOIL_load_OGL_texture(
+		"gfx/skybox1.png",
+		SOIL_LOAD_AUTO,
+		SOIL_CREATE_NEW_ID,
+		SOIL_FLAG_MIPMAPS | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT);
+
+	SKYBOX2 = SOIL_load_OGL_texture(
+		"gfx/skybox2.png",
+		SOIL_LOAD_AUTO,
+		SOIL_CREATE_NEW_ID,
+		SOIL_FLAG_MIPMAPS | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT);
+
+
 	ISoundEngine* engine = createIrrKlangDevice();
 	ISound* music1 = engine->play3D("Music/jazz.mp3", vec3df(13, 0, 0), true, false, true);
 	music1->setVolume(20);
@@ -65,6 +78,30 @@ void Scene::handleInput(float dt)
 			glPolygonMode(GL_BACK, GL_FILL);
 			renderType = 0;
 		}
+	}
+
+
+	if (input->isKeyDown('p') || (input->isKeyDown('P'))) {
+		startingBuilding.RoofRemover++;
+
+			if (startingBuilding.RoofRemover > 1) {
+				startingBuilding.RoofRemover = 0;
+			}
+			input->setKeyUp('p');
+			input->setKeyUp('P');
+
+	}
+
+
+	if (input->isKeyDown('o') || (input->isKeyDown('O'))) {
+		SkyBoxChanger++;
+
+		if (SkyBoxChanger > 3) {
+			SkyBoxChanger = 1;
+		}
+		input->setKeyUp('o');
+		input->setKeyUp('O');
+
 	}
 
 	if (input->isKeyDown('f') || input->isKeyDown('F')) {
@@ -157,16 +194,27 @@ void Scene::update(float dt)
 void Scene::DrawCube() {
 	glPushMatrix();
 
-	glBindTexture(GL_TEXTURE_2D, SKYBOX);
-	if (Switcher == 3) {
-		glTranslatef(-40, 90, -10);
-	}
-	else
+
+	glTranslatef(camera.getPosX(), camera.getPosY(), camera.getPosZ());
+
+
+	if (SkyBoxChanger == 1)
 	{
-		glTranslatef(camera.getPosX(), camera.getPosY(), camera.getPosZ());
+		glBindTexture(GL_TEXTURE_2D, SKYBOX);
 
 	}
-	/*skybox.drawSkybox();*/
+
+	if (SkyBoxChanger == 2)
+	{
+		glBindTexture(GL_TEXTURE_2D, SKYBOX1);
+	}
+
+	if (SkyBoxChanger == 3)
+	{
+		glBindTexture(GL_TEXTURE_2D, SKYBOX2);
+	}
+    
+	glPushMatrix();
 	glBegin(GL_QUADS);
 
 	glTexCoord2f(0.25f, 0.25f);
@@ -545,31 +593,31 @@ void Scene::solarSystem()
 	// Sun
 	glPushMatrix();
 	glTranslatef(-12.0f, 3.0f, 12.0f);
-	glScalef(1.0, 1.0, 1.0);
+	glScalef(0.5, 0.5, 0.5);
 	glDisable(GL_LIGHTING);
 	glColor3f(1, 1, 0);
-	gluSphere(gluNewQuadric(), 0.5, 40, 40);
+	precuduallyGeneratedShapes.Sphere(60);
 	glEnable(GL_LIGHTING);
 	glPopMatrix();
 
 	// Planet 1 - Blue
 	glPushMatrix();
-	glTranslatef(-11.6f, 3.5f, 12.0f);
-	glScalef(0.7, 0.7, 0.7);
+	glTranslatef(-11.0f, 3.5f, 12.0f);
+	glScalef(0.5, 0.5, 0.5);
 	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, mat_diff_blue);
 	glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
 	glMateriali(GL_FRONT, GL_SHININESS, high_shininess);
-	gluSphere(gluNewQuadric(), 0.5, 40, 40);
+	precuduallyGeneratedShapes.Sphere(60);
 	glPopMatrix();
 
 	// Planet 2 - Purple
 	glPushMatrix();
-	glTranslatef(-12.6f, 3.5f, 12.0f);
-	glScalef(0.7, 0.7, 0.7);
+	glTranslatef(-13.0f, 3.5f, 12.0f);
+	glScalef(0.5, 0.5, 0.5);
 	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, mat_diff_purple);
 	glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
 	glMateriali(GL_FRONT, GL_SHININESS, high_shininess);
-	gluSphere(gluNewQuadric(), 0.5, 40, 40);
+	precuduallyGeneratedShapes.Sphere(60);
 	glPopMatrix();
 
 	glEnable(GL_COLOR_MATERIAL);
@@ -601,7 +649,7 @@ void Scene::cameraSwitcher() {
 	}
 	
 	if (Switcher == 3) {
-		gluLookAt(-40.0f, 90.0f, -10.0f, 0, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f);
+		gluLookAt(-7.0f, 1.0f, 18.0f, -10.0, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 		if (Switcher != 3) {
 			gluLookAt(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 
@@ -730,6 +778,14 @@ void Scene::render() {
 
 	glPushMatrix();
 	TrasnparentBox();
+	glPopMatrix();
+
+	glPushMatrix();
+	Chair.render();
+	glPopMatrix();
+
+	glPushMatrix();
+	lighting.RoomLight();
 	glPopMatrix();
 
 	// End render geometry --------------------------------------

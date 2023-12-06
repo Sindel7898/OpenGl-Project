@@ -19,6 +19,7 @@ void Lighting::Spotlight(GLenum LightName)
 
 }
 
+
 void Lighting::ChangingSpotlight(int Switcher)
 {
 
@@ -68,3 +69,19 @@ void Lighting::ChangingSpotlight(int Switcher)
 	glPopMatrix();
 
 }
+
+void Lighting:: RoomLight()
+{
+	/*glPushMatrix();
+	GLfloat Light_Ambient[] = { 0.4f, 0.4f, 0.4f, 1.0f };
+	GLfloat Light_Diffuse[] = { 1.0f, 0.0f, 1.0f, 1.0f };
+	GLfloat Light_Position[] = { 3.0f, 0.0f, 3.0f, 1.0f };
+
+	glLightfv(GL_LIGHT7, GL_AMBIENT, Light_Ambient);
+	glLightfv(GL_LIGHT7, GL_DIFFUSE, Light_Diffuse);
+	glLightfv(GL_LIGHT7, GL_POSITION, Light_Position);
+
+	glEnable(GL_LIGHT7);
+	glPopMatrix();*/
+}
+

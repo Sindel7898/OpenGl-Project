@@ -19,5 +19,6 @@ class StartingBuilding {
 	GLint Wall;
 	GLint Stand;
 	void Building();
+	int RoofRemover = 0 ;
 	
 };

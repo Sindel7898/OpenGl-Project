@@ -14,6 +14,7 @@ Skybox::Skybox()
 
 }
 
+//calls skybox
 void Skybox::drawSkybox()
 {
 	

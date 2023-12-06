@@ -1,6 +1,6 @@
 #include"StartingBuilding.h"
 
-
+//constructor to call the textures 
  StartingBuilding::StartingBuilding(){
 	 Floor = SOIL_load_OGL_texture(
 		 "gfx/checked.png",
@@ -20,6 +20,9 @@
 		 SOIL_CREATE_NEW_ID,
 		 SOIL_FLAG_MIPMAPS | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT);
 }
+
+
+ // draws the building and applies relevant texture to specofic parts 
 void StartingBuilding::Building() {
 	
 	glScalef(80, 20, 40);

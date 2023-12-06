@@ -1,33 +1,38 @@
+// Include the Scene header file
 #include "Scene.h"
 
-// Scene constructor, initilises OpenGL
-// You should add further variables to need initilised.
-Scene::Scene(Input *in)							
+// Scene constructor, initializes OpenGL
+// You should add further variables that need to be initialized.
+Scene::Scene(Input* in)
 {
-	// Store pointer for input class
+	// Store a pointer for the input class
 	input = in;
+
+	// Initialize OpenGL
 	initialiseOpenGL();
 
-	// Other OpenGL / render setting should be applied here.
-	// Initialise scene variables
+	// Other OpenGL/render settings should be applied here.
+	// Initialize scene variables
+
+	// Enable 2D textures
 	glEnable(GL_TEXTURE_2D);
+
+	// Disable color material
 	glDisable(GL_COLOR_MATERIAL);
+
+	// Enable lighting
 	glEnable(GL_LIGHTING);
 
-
-
+	// Load 3D models with their respective textures
 	Teapot.load("models/teapot.obj", "gfx/crate.png");
 	NintendoDS.load("models/N_3DS.obj", "gfx/Mt_Rolling3DS_01.png");
 	SpaceShip.load("models/spaceship.obj", "gfx/spaceship.JPG");
-	//lamp.load("models/lamp.obj", "gfx/wood.JPG");
+	lamp.load("models/lamp.obj", "gfx/wood.JPG"); 
 	Drone.load("models/drone.obj", "gfx/Drone.JPG");
 	Radio.load("models/Radio.obj", "gfx/Radio.PNG");
 	DocOc.load("models/Doctor Octopus.obj", "gfx/body.PNG");
 
-
-
-
-
+	// Load skybox textures
 	SKYBOX = SOIL_load_OGL_texture(
 		"gfx/skybox.png",
 		SOIL_LOAD_AUTO,
@@ -46,16 +51,18 @@ Scene::Scene(Input *in)
 		SOIL_CREATE_NEW_ID,
 		SOIL_FLAG_MIPMAPS | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT);
 
-
+	// Initialize IrrKlang sound engine and play 3D music
 	ISoundEngine* engine = createIrrKlangDevice();
 	ISound* music1 = engine->play3D("Music/jazz.mp3", vec3df(13, 0, 0), true, false, true);
 	music1->setVolume(20);
 }
 
+
 void Scene::handleInput(float dt)
 {
 	// Handle user input
 
+	// Switch between different colors for light 
 	if (input->isKeyDown('l') || input->isKeyDown('L')) {
 		ColorSwitcher++;
 
@@ -65,6 +72,8 @@ void Scene::handleInput(float dt)
 		input->setKeyUp('l');
 		input->setKeyUp('L');
 	}
+
+	// Toggle wireframe rendering mode
 	if (input->isKeyDown('r') || input->isKeyDown('R')) {
 		glPolygonMode(GL_FRONT, GL_LINE);
 		glPolygonMode(GL_BACK, GL_LINE);
@@ -80,7 +89,7 @@ void Scene::handleInput(float dt)
 		}
 	}
 
-
+	// Toggle roof removal for a building
 	if (input->isKeyDown('p') || (input->isKeyDown('P'))) {
 		startingBuilding.RoofRemover++;
 
@@ -93,6 +102,7 @@ void Scene::handleInput(float dt)
 	}
 
 
+	// Switch between different skyboxes
 	if (input->isKeyDown('o') || (input->isKeyDown('O'))) {
 		SkyBoxChanger++;
 
@@ -126,6 +136,8 @@ void Scene::handleInput(float dt)
 		input->setKeyUp('3');
 	}
 
+
+	// Move the camera based on key inputs
 	if (input->isKeyDown('w'))
 	{
 
@@ -160,6 +172,7 @@ void Scene::handleInput(float dt)
 		camera.moveUp(dt);
 	}
 
+	// Control the camera using the mouse
 	xDiff = input->getMouseX() - (width / 2);
 	yDiff = input->getMouseY() - (height / 2);
 	if (xDiff != 0 || yDiff != 0)
@@ -168,6 +181,7 @@ void Scene::handleInput(float dt)
 	}
 	camera.update();
 
+	// Reset the mouse position and hide the cursor
 	glutWarpPointer(width / 2, height / 2);
 	glutSetCursor(GLUT_CURSOR_NONE);
 
@@ -191,10 +205,11 @@ void Scene::update(float dt)
 }
 
 
+//skybox
 void Scene::DrawCube() {
 	glPushMatrix();
 
-
+	//tracks the locaiton of the skybox to the camera
 	glTranslatef(camera.getPosX(), camera.getPosY(), camera.getPosZ());
 
 
@@ -281,6 +296,7 @@ void Scene::DrawCube() {
 }
 
 
+// reflection surface for the teapot
 void Scene::ReflectionFloor() {
 	glPushMatrix();
 	glScalef(2, 2, 2);
@@ -297,22 +313,30 @@ void Scene::ReflectionFloor() {
 }
 
 void Scene::Reflection() {
+	// Save the current matrix state
 	glPushMatrix();
+
+	// Disable writing to the color buffer and enable stencil testing
 	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 	glEnable(GL_STENCIL_TEST);
+
+	// Set stencil function and operation
 	glStencilFunc(GL_ALWAYS, 1, 1);
 	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-	glDisable(GL_DEPTH_TEST);
 
+	// Disable depth testing and render the reflection floor
+	glDisable(GL_DEPTH_TEST);
 	ReflectionFloor();
 
-
+	// Re-enable depth testing and restore color mask
 	glEnable(GL_DEPTH_TEST);
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+
+	// Set stencil function and operation for the reflected objects
 	glStencilFunc(GL_EQUAL, 1, 1);
 	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
 
-
+	// Save the matrix state and apply transformations for the reflected teapot
 	glPushMatrix();
 	glTranslatef(0.8f, -0.1f, 0.6f);
 	glScalef(0.05f, 0.05f, 0.05f);
@@ -320,6 +344,7 @@ void Scene::Reflection() {
 	Teapot.render();
 	glPopMatrix();
 
+	// Disable stencil testing, enable blending, and render the reflection floor
 	glDisable(GL_STENCIL_TEST);
 	glEnable(GL_BLEND);
 	glDisable(GL_LIGHTING);
@@ -328,6 +353,7 @@ void Scene::Reflection() {
 	glEnable(GL_LIGHTING);
 	glDisable(GL_BLEND);
 
+	// Save the matrix state and apply transformations for the second reflected teapot
 	glPushMatrix();
 	glTranslatef(0.8f, -0.1f, -0.6f);
 	glScalef(0.05f, 0.05f, 0.05f);
@@ -335,27 +361,30 @@ void Scene::Reflection() {
 	Teapot.render();
 	glPopMatrix();
 
+	// Restore the original matrix state
 	glPopMatrix();
-
-
 }
-void Scene::StartingRoom() {
 
+
+
+void Scene::StartingRoom() {
+	// Render the main building
 	glPushMatrix();
 	startingBuilding.Building();
 	glPopMatrix();
 
+	// Render display stands and reflection stand
 	glPushMatrix();
 	startingBuilding.DisplayStand(8, 3);
 	startingBuilding.DisplayStand(4, 3);
 	startingBuilding.ReflectionStand(0, 3);
-	//opposite side of building
+	// Render on the opposite side of the building
 	startingBuilding.DisplayStand(8, -3);
 	startingBuilding.DisplayStand(4, -3);
 	startingBuilding.DisplayStand(0, -3);
 	glPopMatrix();
 
-	
+	// Render NintendoDS object
 	glPushMatrix();
 	glRotatef(90, 0.2f, 1.0f, 0.0f);
 	glTranslatef(12.0f, 1.0f, 0.0f);
@@ -364,6 +393,7 @@ void Scene::StartingRoom() {
 	NintendoDS.render();
 	glPopMatrix();
 
+	// Render Doctor Octopus object
 	glPushMatrix();
 	glTranslatef(-24.0f, 1.2f, 13.0f);
 	glRotatef(Rotation, 0, 1, 0);
@@ -371,6 +401,7 @@ void Scene::StartingRoom() {
 	DocOc.render();
 	glPopMatrix();
 
+	// Render Drone object
 	glPushMatrix();
 	glTranslatef(-24, 2, -12.0);
 	glScalef(70.0f, 70.0f, 70.0);
@@ -378,26 +409,24 @@ void Scene::StartingRoom() {
 	Drone.render();
 	glPopMatrix();
 
+	// Render Radio object
 	glPushMatrix();
 	glTranslatef(-12, 1, -12);
 	glScalef(0.4f, 0.4f, 0.4f);
 	material.MaterialSpecifics(1, 100);
 	Radio.render();
 	glPopMatrix();
-
-
-	
-
-
 }
 
-void Scene::RoomSpotlights() {
 
+void Scene::RoomSpotlights() {
+	// Spotlight 1: Above center position
 	glPushMatrix();
 	glTranslatef(0.0f, 5.0f, -12.0f);
 	lighting.Spotlight(GL_LIGHT0);
 	glPopMatrix();
 
+	// Lamp for Spotlight 1
 	glPushMatrix();
 	glTranslatef(0.0f, 4.0f, -12.0f);
 	material.MaterialSpecifics(1, 60);
@@ -405,12 +434,13 @@ void Scene::RoomSpotlights() {
 	lamp.render();
 	glPopMatrix();
 
-
+	// Spotlight 2: Above left position
 	glPushMatrix();
 	glTranslatef(-12.0f, 5.0f, -12.0f);
 	lighting.ChangingSpotlight(ColorSwitcher);
 	glPopMatrix();
 
+	// Lamp for Spotlight 2
 	glPushMatrix();
 	glTranslatef(-12.0f, 4.0f, -12.0f);
 	material.MaterialSpecifics(1, 60);
@@ -418,24 +448,27 @@ void Scene::RoomSpotlights() {
 	lamp.render();
 	glPopMatrix();
 
+	// Spotlight 3: Above far left position
 	glPushMatrix();
 	glTranslatef(-24.0f, 5.0f, -12.0f);
 	lighting.Spotlight(GL_LIGHT1);
 	glPopMatrix();
 
+	// Lamp for Spotlight 3
 	glPushMatrix();
 	glTranslatef(-24.0f, 4.0f, -12.0f);
 	material.MaterialSpecifics(1, 60);
 	glScalef(0.1, 0.1, 0.1);
 	lamp.render();
 	glPopMatrix();
-	
 
+	// Spotlight 4: Above center position, opposite side
 	glPushMatrix();
 	glTranslatef(0.0f, 5.0f, 12.0f);
 	lighting.Spotlight(GL_LIGHT2);
 	glPopMatrix();
 
+	// Lamp for Spotlight 4
 	glPushMatrix();
 	glTranslatef(0.0f, 4.0f, 12.0f);
 	material.MaterialSpecifics(1, 60);
@@ -443,11 +476,13 @@ void Scene::RoomSpotlights() {
 	lamp.render();
 	glPopMatrix();
 
+	// Spotlight 5: Above left position, opposite side
 	glPushMatrix();
 	glTranslatef(-12.0f, 5.0f, 12.0f);
 	lighting.Spotlight(GL_LIGHT3);
 	glPopMatrix();
 
+	// Lamp for Spotlight 5
 	glPushMatrix();
 	glTranslatef(-12.0f, 4.0f, 12.0f);
 	material.MaterialSpecifics(1, 60);
@@ -455,21 +490,23 @@ void Scene::RoomSpotlights() {
 	lamp.render();
 	glPopMatrix();
 
+	// Spotlight 6: Above far left position, opposite side
 	glPushMatrix();
-	glTranslatef(-24.0f, 4.0f, 12.0f);
+	glTranslatef(-24.0f, 5.0f, 12.0f);
 	lighting.Spotlight(GL_LIGHT5);
 	glPopMatrix();
 
+	// Lamp for Spotlight 6
 	glPushMatrix();
 	glTranslatef(-24.0f, 4.0f, 12.0f);
 	material.MaterialSpecifics(1, 60);
 	glScalef(0.1, 0.1, 0.1);
 	lamp.render();
 	glPopMatrix();
-
-
 }
+
 void Scene::OrbitSpaceShips() {
+	// Spaceship 1
 	glPushMatrix();
 	material.MaterialSpecifics(0.5, 20);
 	glScalef(1, 1, 1);
@@ -479,6 +516,7 @@ void Scene::OrbitSpaceShips() {
 	SpaceShip.render();
 	glPopMatrix();
 
+	// Spaceship 2
 	glPushMatrix();
 	material.MaterialSpecifics(0.5, 20);
 	glScalef(1, 1, 1);
@@ -488,6 +526,7 @@ void Scene::OrbitSpaceShips() {
 	SpaceShip.render();
 	glPopMatrix();
 
+	// Spaceship 3
 	glPushMatrix();
 	material.MaterialSpecifics(0.5, 20);
 	glScalef(1, 1, 1);
@@ -497,6 +536,7 @@ void Scene::OrbitSpaceShips() {
 	SpaceShip.render();
 	glPopMatrix();
 
+	// Spaceship 4
 	glPushMatrix();
 	material.MaterialSpecifics(0.5, 20);
 	glScalef(1, 1, 1);
@@ -506,6 +546,7 @@ void Scene::OrbitSpaceShips() {
 	SpaceShip.render();
 	glPopMatrix();
 
+	// Spaceship 5
 	glPushMatrix();
 	material.MaterialSpecifics(0.5, 20);
 	glScalef(1, 1, 1);
@@ -515,6 +556,7 @@ void Scene::OrbitSpaceShips() {
 	SpaceShip.render();
 	glPopMatrix();
 
+	// Spaceship 6
 	glPushMatrix();
 	material.MaterialSpecifics(0.5, 20);
 	glScalef(1, 1, 1);
@@ -524,6 +566,7 @@ void Scene::OrbitSpaceShips() {
 	SpaceShip.render();
 	glPopMatrix();
 
+	// Spaceship 7
 	glPushMatrix();
 	material.MaterialSpecifics(0.5, 20);
 	glScalef(1, 1, 1);
@@ -533,6 +576,7 @@ void Scene::OrbitSpaceShips() {
 	SpaceShip.render();
 	glPopMatrix();
 
+	// Spaceship 8
 	glPushMatrix();
 	glScalef(1, 1, 1);
 	material.MaterialSpecifics(0.5, 20);
@@ -542,6 +586,7 @@ void Scene::OrbitSpaceShips() {
 	SpaceShip.render();
 	glPopMatrix();
 
+	// Spaceship 9
 	glPushMatrix();
 	glScalef(1, 1, 1);
 	material.MaterialSpecifics(0.5, 20);
@@ -551,6 +596,7 @@ void Scene::OrbitSpaceShips() {
 	SpaceShip.render();
 	glPopMatrix();
 
+	// Spaceship 10
 	glPushMatrix();
 	glScalef(1, 1, 1);
 	material.MaterialSpecifics(0.5, 20);
@@ -559,15 +605,13 @@ void Scene::OrbitSpaceShips() {
 	glScalef(10.0f, 10.0f, 5.0f);
 	SpaceShip.render();
 	glPopMatrix();
-
-
-
-	
 }
+
 
 
 void Scene::solarSystem()
 {
+	// Light setup for the sun
 	glPushMatrix();
 	GLfloat Light_Diffuse[] = { 0.1f, 0.1f, 0.1f, 1.0f };
 	GLfloat Light_Position[] = { 0.3, 0.0, 5.7, 1.0f };
@@ -596,7 +640,7 @@ void Scene::solarSystem()
 	glScalef(0.5, 0.5, 0.5);
 	glDisable(GL_LIGHTING);
 	glColor3f(1, 1, 0);
-	precuduallyGeneratedShapes.Sphere(60);
+	precuduallyGeneratedShapes.Sphere(60); // Function call to render a sphere
 	glEnable(GL_LIGHTING);
 	glPopMatrix();
 
@@ -607,7 +651,7 @@ void Scene::solarSystem()
 	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, mat_diff_blue);
 	glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
 	glMateriali(GL_FRONT, GL_SHININESS, high_shininess);
-	precuduallyGeneratedShapes.Sphere(60);
+	precuduallyGeneratedShapes.Sphere(60); // Function call to render a sphere
 	glPopMatrix();
 
 	// Planet 2 - Purple
@@ -617,46 +661,49 @@ void Scene::solarSystem()
 	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, mat_diff_purple);
 	glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
 	glMateriali(GL_FRONT, GL_SHININESS, high_shininess);
-	precuduallyGeneratedShapes.Sphere(60);
+	precuduallyGeneratedShapes.Sphere(60); // Function call to render a sphere
 	glPopMatrix();
 
 	glEnable(GL_COLOR_MATERIAL);
 	glPopMatrix();
 }
 
+
 void Scene::cameraSwitcher() {
 
+	// Switcher == 0: Use the current camera position and orientation
 	if (Switcher == 0) {
-		gluLookAt(camera.getPosX(), camera.getPosY(), camera.getPosZ(), camera.getLookAtX(), camera.getLookAtY(), camera.getLookAtZ(), camera.getUpX(), camera.getUpY(), camera.getUpZ());
-
+		gluLookAt(camera.getPosX(), camera.getPosY(), camera.getPosZ(),
+			camera.getLookAtX(), camera.getLookAtY(), camera.getLookAtZ(),
+			camera.getUpX(), camera.getUpY(), camera.getUpZ());
 	}
 
+	// Switcher == 1: Set a specific view for the first scenario
 	if (Switcher == 1) {
 		gluLookAt(-40.0f, 10.0f, -10.0f, 0, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f);
+		// Reset the view if Switcher is not 1
 		if (Switcher != 1) {
 			gluLookAt(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
-
 		}
 	}
 
-
+	// Switcher == 2: Set a specific view for the second scenario
 	if (Switcher == 2) {
 		gluLookAt(40.0f, 10.0f, -10.0f, 0, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f);
+		// Reset the view if Switcher is not 2
 		if (Switcher != 2) {
 			gluLookAt(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
-
 		}
 	}
-	
+
+	// Switcher == 3: Set a specific view for the third scenario
 	if (Switcher == 3) {
 		gluLookAt(-7.0f, 1.0f, 18.0f, -10.0, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+		// Reset the view if Switcher is not 3
 		if (Switcher != 3) {
 			gluLookAt(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
-
 		}
 	}
-
-
 }
 
 

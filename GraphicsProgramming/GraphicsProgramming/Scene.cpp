@@ -20,7 +20,6 @@ Scene::Scene(Input *in)
 	NintendoDS.load("models/N_3DS.obj", "gfx/Mt_Rolling3DS_01.png");
 	SpaceShip.load("models/spaceship.obj", "gfx/spaceship.JPG");
 	//lamp.load("models/lamp.obj", "gfx/wood.JPG");
-	Halo.load("models/chief.obj", "gfx/chief.png");
 	Drone.load("models/drone.obj", "gfx/Drone.JPG");
 	Radio.load("models/Radio.obj", "gfx/Radio.PNG");
 	DocOc.load("models/Doctor Octopus.obj", "gfx/body.PNG");
@@ -612,6 +611,84 @@ void Scene::cameraSwitcher() {
 
 }
 
+
+
+void Scene::TrasnparentBox() {
+	glEnable(GL_BLEND);
+	glTranslatef(-24, 2, -12.0);
+	glScalef(2.5, 2.5, 2.5);
+	glColor4f(0.0f, 0.0f, 1.0f, 0.25);
+	glBegin(GL_QUADS);
+	// Front Face
+	glNormal3f(0, 0, -1);
+	glTexCoord2f(0.25f, 0.25f);
+	glVertex3f(-0.5f, 0.5f, -0.5f);
+	glTexCoord2f(0.75f, 0.25f);
+	glVertex3f(0.5f, 0.5f, -0.5f);
+	glTexCoord2f(0.75f, 0.75f);
+	glVertex3f(0.5f, -0.5f, -0.5f);
+	glTexCoord2f(0.25f, 0.75f);
+	glVertex3f(-0.5f, -0.5f, -0.5f);
+
+	// Right Face
+	glNormal3f(1, 0, 0);
+	glTexCoord2f(0.75f, 0.25f);
+	glVertex3f(0.5f, 0.5f, -0.5f);
+	glTexCoord2f(1.0f, 0.25f);
+	glVertex3f(0.5f, 0.5f, 0.5f);
+	glTexCoord2f(1.0f, 0.75f);
+	glVertex3f(0.5f, -0.5f, 0.5f);
+	glTexCoord2f(0.75f, 0.75f);
+	glVertex3f(0.5f, -0.5f, -0.5f);
+
+	// Bottom Face
+	glNormal3f(0, -1, 0);
+	glTexCoord2f(0.25f, 0.75f);
+	glVertex3f(-0.5f, -0.5f, 0.5f);
+	glTexCoord2f(0.75f, 0.75f);
+	glVertex3f(0.5f, -0.5f, 0.5f);
+	glTexCoord2f(0.75f, 1.0f);
+	glVertex3f(0.5f, -0.5f, -0.5f);
+	glTexCoord2f(0.25f, 1.0f);
+	glVertex3f(-0.5f, -0.5f, -0.5f);
+
+	// Left Face
+	glNormal3f(-1, 0, 0);
+	glTexCoord2f(0.25f, 0.25f);
+	glVertex3f(-0.5f, 0.5f, -0.5f);
+	glTexCoord2f(0.0f, 0.25f);
+	glVertex3f(-0.5f, 0.5f, 0.5f);
+	glTexCoord2f(0.0f, 0.5f);
+	glVertex3f(-0.5f, -0.5f, 0.5f);
+	glTexCoord2f(0.25f, 0.5f);
+	glVertex3f(-0.5f, -0.5f, -0.5f);
+
+	// Top Face
+	glNormal3f(0, 1, 0);
+	glTexCoord2f(0.25f, 0.0f);
+	glVertex3f(-0.5f, 0.5f, 0.5f);
+	glTexCoord2f(0.75f, 0.0f);
+	glVertex3f(0.5f, 0.5f, 0.5f);
+	glTexCoord2f(0.75f, 0.25f);
+	glVertex3f(0.5f, 0.5f, -0.5f);
+	glTexCoord2f(0.25f, 0.25f);
+	glVertex3f(-0.5f, 0.5f, -0.5f);
+
+	// Back Face
+	glNormal3f(0, 0, 1);
+	glTexCoord2f(1.0f, 0.25f);
+	glVertex3f(-0.5f, 0.5f, 0.5f);
+	glTexCoord2f(0.75f, 0.25f);
+	glVertex3f(0.5f, 0.5f, 0.5f);
+	glTexCoord2f(0.75f, 0.5f);
+	glVertex3f(0.5f, -0.5f, 0.5f);
+	glTexCoord2f(1.0f, 0.5f);
+	glVertex3f(-0.5f, -0.5f, 0.5f);
+	glDisable(GL_BLEND);
+	glPopMatrix();
+	glEnd();
+}
+
 void Scene::render() {
 
 	// Clear Color and Depth Buffers
@@ -649,6 +726,10 @@ void Scene::render() {
 
 	glPushMatrix();
 	Reflection();
+	glPopMatrix();
+
+	glPushMatrix();
+	TrasnparentBox();
 	glPopMatrix();
 
 	// End render geometry --------------------------------------

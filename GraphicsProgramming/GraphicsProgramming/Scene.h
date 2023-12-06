@@ -65,6 +65,8 @@ public:
 	void solarSystem();
 	void cameraSwitcher();
 	void Music();
+	void TransparantPlane();
+	void TrasnparentBox();
 	// Main render function
 	void render();
 	// Handle input function that receives delta time from parent.

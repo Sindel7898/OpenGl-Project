@@ -16,12 +16,6 @@ public:
 	float b;
 	float Alpha;	
 	void Spotlight(GLenum LightName);
-	//void Spotlight1();
-	void Spotlight1(GLenum LightName);
-	void Spotlight2();
-	void Spotlight3();
-	void Spotlight4();
-	void Spotlight5();
 
 	void ChangingSpotlight(int colorSwitcher);
 	void RoomLight();

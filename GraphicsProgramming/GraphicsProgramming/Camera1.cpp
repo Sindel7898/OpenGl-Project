@@ -1,5 +1,5 @@
 ﻿#include "Camera.h"
-
+//majority of code in this are from the video provided on the mylearning space and LOTS AND LOTS of help from the 2 lecturers in the graphics programming module (2023)
 
 Camera::Camera() {
 	lookAt = Vector3(0.0f, 0.0f, 0.0f);
@@ -9,8 +9,6 @@ Camera::Camera() {
 }
 void Camera::update()
 {
-
-	//Code given by Paul
 		// handle rotation 
 		// YAW = LEFT to RIGHT. PITCH = UP and DOWN Roll = tilting your head
 	cosY = cosf(Yaw * 3.1415 / 180);

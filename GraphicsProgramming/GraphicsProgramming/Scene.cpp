@@ -27,7 +27,7 @@ Scene::Scene(Input* in)
 	Teapot.load("models/teapot.obj", "gfx/crate.png");
 	NintendoDS.load("models/N_3DS.obj", "gfx/Mt_Rolling3DS_01.png");
 	SpaceShip.load("models/spaceship.obj", "gfx/spaceship.JPG");
-	lamp.load("models/lamp.obj", "gfx/wood.JPG"); 
+	lamp.load("models/HangingLamp.obj", "gfx/HangingLamp.png"); 
 	Drone.load("models/drone.obj", "gfx/Drone.JPG");
 	Radio.load("models/Radio.obj", "gfx/Radio.PNG");
 	DocOc.load("models/Doctor Octopus.obj", "gfx/body.PNG");
@@ -35,6 +35,12 @@ Scene::Scene(Input* in)
 	// Load skybox textures
 	SKYBOX = SOIL_load_OGL_texture(
 		"gfx/skybox.png",
+		SOIL_LOAD_AUTO,
+		SOIL_CREATE_NEW_ID,
+		SOIL_FLAG_MIPMAPS | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT);
+
+	Earth = SOIL_load_OGL_texture(
+		"gfx/earth.jpg",
 		SOIL_LOAD_AUTO,
 		SOIL_CREATE_NEW_ID,
 		SOIL_FLAG_MIPMAPS | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT);
@@ -428,9 +434,9 @@ void Scene::RoomSpotlights() {
 
 	// Lamp for Spotlight 1
 	glPushMatrix();
-	glTranslatef(0.0f, 4.0f, -12.0f);
+	glTranslatef(0.0f, 14.0f, -12.0f);
 	material.MaterialSpecifics(1, 60);
-	glScalef(0.1, 0.1, 0.1);
+	glScalef(0.03, 0.003, 0.03);
 	lamp.render();
 	glPopMatrix();
 
@@ -442,9 +448,9 @@ void Scene::RoomSpotlights() {
 
 	// Lamp for Spotlight 2
 	glPushMatrix();
-	glTranslatef(-12.0f, 4.0f, -12.0f);
+	glTranslatef(-12.0f, 14.0f, -12.0f);
 	material.MaterialSpecifics(1, 60);
-	glScalef(0.1, 0.1, 0.1);
+	glScalef(0.03, 0.003, 0.03);
 	lamp.render();
 	glPopMatrix();
 
@@ -456,9 +462,9 @@ void Scene::RoomSpotlights() {
 
 	// Lamp for Spotlight 3
 	glPushMatrix();
-	glTranslatef(-24.0f, 4.0f, -12.0f);
+	glTranslatef(-24.0f, 14.0f, -12.0f);
 	material.MaterialSpecifics(1, 60);
-	glScalef(0.1, 0.1, 0.1);
+	glScalef(0.03, 0.003, 0.03);
 	lamp.render();
 	glPopMatrix();
 
@@ -470,9 +476,9 @@ void Scene::RoomSpotlights() {
 
 	// Lamp for Spotlight 4
 	glPushMatrix();
-	glTranslatef(0.0f, 4.0f, 12.0f);
+	glTranslatef(0.0f, 14.0f, 12.0f);
 	material.MaterialSpecifics(1, 60);
-	glScalef(0.1, 0.1, 0.1);
+	glScalef(0.03, 0.003, 0.03);
 	lamp.render();
 	glPopMatrix();
 
@@ -484,9 +490,9 @@ void Scene::RoomSpotlights() {
 
 	// Lamp for Spotlight 5
 	glPushMatrix();
-	glTranslatef(-12.0f, 4.0f, 12.0f);
+	glTranslatef(-12.0f, 14.0f, 12.0f);
 	material.MaterialSpecifics(1, 60);
-	glScalef(0.1, 0.1, 0.1);
+	glScalef(0.03, 0.003, 0.03);
 	lamp.render();
 	glPopMatrix();
 
@@ -498,9 +504,9 @@ void Scene::RoomSpotlights() {
 
 	// Lamp for Spotlight 6
 	glPushMatrix();
-	glTranslatef(-24.0f, 4.0f, 12.0f);
+	glTranslatef(-24.0f, 14.0f, 12.0f);
 	material.MaterialSpecifics(1, 60);
-	glScalef(0.1, 0.1, 0.1);
+	glScalef(0.03, 0.003, 0.03);
 	lamp.render();
 	glPopMatrix();
 }
@@ -640,6 +646,7 @@ void Scene::solarSystem()
 	glScalef(0.5, 0.5, 0.5);
 	glDisable(GL_LIGHTING);
 	glColor3f(1, 1, 0);
+	glBindTexture(GL_TEXTURE_2D, Earth);
 	precuduallyGeneratedShapes.Sphere(60); // Function call to render a sphere
 	glEnable(GL_LIGHTING);
 	glPopMatrix();
@@ -810,9 +817,9 @@ void Scene::render() {
 	OrbitSpaceShips();
 	glPopMatrix();
 
-	glPushMatrix();
-	//lighting.RoomLight();
-	glPopMatrix();
+	//glPushMatrix();
+	////lighting.RoomLight();
+	//glPopMatrix();
 
 
 	glPushMatrix();
@@ -831,9 +838,7 @@ void Scene::render() {
 	Chair.render();
 	glPopMatrix();
 
-	glPushMatrix();
-	lighting.RoomLight();
-	glPopMatrix();
+	
 
 	// End render geometry --------------------------------------
 	glEnd();

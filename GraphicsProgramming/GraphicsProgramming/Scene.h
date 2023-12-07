@@ -35,7 +35,7 @@ public:
 	GLint SKYBOX;
 	GLint SKYBOX1;
 	GLint SKYBOX2;
-
+	GLint Earth;
 
 	Model Teapot;
 	Model NintendoDS;
@@ -48,7 +48,7 @@ public:
 	Model Radio;
 	Model DocOc;
 	Model Chair;
-
+	Model PoolTable;
 	int SkyBoxChanger = 1;
 	int ColorSwitcher;
 	int renderType = 0;

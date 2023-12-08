@@ -28,6 +28,7 @@ void StartingBuilding::Building() {
 	glScalef(80, 20, 40);
 	glTranslatef(0, 0.3, 0);
 	glBindTexture(GL_TEXTURE_2D, Wall);
+	material.MaterialSpecifics(1, 40);
 	glBegin(GL_QUADS);
 
 	glTexCoord2f(0.25f, 0.25f);

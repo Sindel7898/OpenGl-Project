@@ -31,7 +31,6 @@ Scene::Scene(Input* in)
 	Drone.load("models/drone.obj", "gfx/Drone.JPG");
 	Radio.load("models/Radio.obj", "gfx/Radio.PNG");
 	DocOc.load("models/Doctor Octopus.obj", "gfx/body.PNG");
-
 	// Load skybox textures
 	SKYBOX = SOIL_load_OGL_texture(
 		"gfx/skybox.png",
@@ -41,6 +40,13 @@ Scene::Scene(Input* in)
 
 	Earth = SOIL_load_OGL_texture(
 		"gfx/earth.jpg",
+		SOIL_LOAD_AUTO,
+		SOIL_CREATE_NEW_ID,
+		SOIL_FLAG_MIPMAPS | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT);
+
+
+	SATRUN = SOIL_load_OGL_texture(
+		"gfx/DarkEarth.jpg",
 		SOIL_LOAD_AUTO,
 		SOIL_CREATE_NEW_ID,
 		SOIL_FLAG_MIPMAPS | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT);
@@ -643,6 +649,7 @@ void Scene::solarSystem()
 	// Sun
 	glPushMatrix();
 	glTranslatef(-12.0f, 3.0f, 12.0f);
+	glRotatef(Rotation, 1,0, 0);
 	glScalef(0.5, 0.5, 0.5);
 	glDisable(GL_LIGHTING);
 	glColor3f(1, 1, 0);
@@ -653,7 +660,9 @@ void Scene::solarSystem()
 
 	// Planet 1 - Blue
 	glPushMatrix();
-	glTranslatef(-11.0f, 3.5f, 12.0f);
+	glTranslatef(-12.5f, 3.5f, 12.0f);
+	glRotatef(Rotation, 0, 1, 0);
+	glTranslatef(2.0f, 0, 0);
 	glScalef(0.5, 0.5, 0.5);
 	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, mat_diff_blue);
 	glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
@@ -664,6 +673,9 @@ void Scene::solarSystem()
 	// Planet 2 - Purple
 	glPushMatrix();
 	glTranslatef(-13.0f, 3.5f, 12.0f);
+	glRotatef(Rotation, 0, 1, 0);
+	glTranslatef(0.0f, -1, 0.0);
+
 	glScalef(0.5, 0.5, 0.5);
 	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, mat_diff_purple);
 	glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
@@ -675,6 +687,46 @@ void Scene::solarSystem()
 	glPopMatrix();
 }
 
+
+void Scene::OutsideSolarSystem()
+{
+	// Light setup for the sun
+	glPushMatrix();
+	GLfloat Light_Diffuse[] = { 0.1f, 0.1f, 0.1f, 1.0f };
+	GLfloat Light_Position[] = { 0.3, 0.0, 5.7, 1.0f };
+
+	glLightfv(GL_LIGHT4, GL_DIFFUSE, Light_Diffuse);
+	glLightfv(GL_LIGHT4, GL_POSITION, Light_Position);
+	glLightf(GL_LIGHT4, GL_CONSTANT_ATTENUATION, 1);
+	glLightf(GL_LIGHT4, GL_LINEAR_ATTENUATION, 1);
+	glLightf(GL_LIGHT4, GL_QUADRATIC_ATTENUATION, 1);
+	glEnable(GL_LIGHT4);
+	glPopMatrix();
+
+	glPushMatrix();
+	// Materials
+	glDisable(GL_COLOR_MATERIAL);
+	GLfloat mat_diff_green[] = { 0.0, 0.6, 0.1, 1.0 };
+	GLfloat mat_diff_purple[] = { 0.4, 0.0, 0.7, 1.0 };
+	GLfloat mat_diff_blue[] = { 0.1, 0.5, 0.8, 1.0 };
+	GLfloat mat_diff_grey[] = { 0.4, 0.4, 0.4, 1.0 };
+	GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0 };
+	GLfloat high_shininess = 100;
+
+	// Sun
+	glPushMatrix();
+	glTranslatef(-10.0f, 29.0f, 4.0f);
+	glRotatef(Rotation, 1, 0, 0);
+	glScalef(7, 7, 7);
+	glDisable(GL_LIGHTING);
+	glColor3f(0.1, 0.1, 0.1);
+	glBindTexture(GL_TEXTURE_2D, SATRUN);
+	precuduallyGeneratedShapes.Sphere(60); // Function call to render a sphere
+	glEnable(GL_LIGHTING);
+	glPopMatrix();
+	glEnable(GL_COLOR_MATERIAL);
+	glPopMatrix();
+}
 
 void Scene::cameraSwitcher() {
 
@@ -835,7 +887,7 @@ void Scene::render() {
 	glPopMatrix();
 
 	glPushMatrix();
-	Chair.render();
+	OutsideSolarSystem();
 	glPopMatrix();
 
 	

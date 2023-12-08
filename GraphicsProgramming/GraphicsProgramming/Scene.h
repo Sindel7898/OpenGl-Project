@@ -36,7 +36,7 @@ public:
 	GLint SKYBOX1;
 	GLint SKYBOX2;
 	GLint Earth;
-
+	GLint SATRUN;
 	Model Teapot;
 	Model NintendoDS;
 	Model SpaceShip;
@@ -47,8 +47,7 @@ public:
 	Model Drone;
 	Model Radio;
 	Model DocOc;
-	Model Chair;
-	Model PoolTable;
+
 	int SkyBoxChanger = 1;
 	int ColorSwitcher;
 	int renderType = 0;
@@ -67,6 +66,7 @@ public:
 	Scene(Input *in);
 	void OrbitSpaceShips();
 	void solarSystem();
+	void OutsideSolarSystem();
 	void cameraSwitcher();
 	void TrasnparentBox();
 	// Main render function
@@ -77,10 +77,8 @@ public:
 	void update(float dt);
 	// Resizes the OpenGL output based on new window size.
 	void resize(int w, int h);
-	void Light();
 	void DrawCube();
 	void RoomSpotlights();
-	void Planet();
 	void ReflectionFloor();
 	void Reflection();
 	void StartingRoom();

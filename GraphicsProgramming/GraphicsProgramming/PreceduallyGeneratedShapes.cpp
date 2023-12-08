@@ -15,7 +15,7 @@ void PrecuduallyGeneratedShapes::Sphere(int resolution)
     float angle_lat = 0;
     float next_lon = 0;
     float next_lat = 0;
-
+    //
     // Begin rendering with OpenGL QUADS
     glBegin(GL_QUADS);
 
